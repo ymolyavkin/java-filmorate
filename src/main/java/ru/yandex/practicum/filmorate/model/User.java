@@ -8,14 +8,14 @@ public class User {
     private final int id;
     private final String name;
     private final String email;
-    private final String description;
+    private final String login;
     private final Date birthday;
 
-    public User(int id, String name, String email, String description, Date birthday) {
+    public User(int id, String name, String email, String login, Date birthday) {
         this.id = id;
         this.name = name;
         this.email = email;
-        this.description = description;
+        this.login = login;
         this.birthday = birthday;
     }
 }
