@@ -30,8 +30,14 @@ public class UserController {
     @PostMapping
     public User create(@RequestBody User user) {
         if (user.getLogin() == null || user.getLogin().isBlank() || user.getLogin().contains(" ")) {
+            //user.setName(user.getLogin());
             log.debug("Логин пользователя пуст или содержит пробелы.");
             throw new ValidationException("Логин пользователя пуст или содержит пробелы.");
+        }
+        if (user.getName() == null || user.getName().isBlank()) {
+            user.setName(user.getLogin());
+            //log.debug("Логин пользователя пуст или содержит пробелы.");
+            //throw new ValidationException("Логин пользователя пуст или содержит пробелы.");
         }
         /*if (user.getId() == null || user.getLogin().isBlank() || user.getLogin().contains(" ")) {
             log.debug("Логин пользователя пуст или содержит пробелы.");
@@ -61,8 +67,12 @@ public class UserController {
 
     @PutMapping
     public User put(@RequestBody User user) {
-        log.debug("Логин пользователя пуст или содержит пробелы.");
+        if (!users.containsKey(user.getId())) {
+            log.debug("Пользователь с id " + user.getId() + " не найден.");
+            throw new ValidationException("Пользователь с id " + user.getId() + " не найден.");
+        }
         if (user.getLogin() == null || user.getLogin().isBlank() || user.getLogin().contains(" ")) {
+            log.debug("Логин пользователя пуст или содержит пробелы.");
             throw new ValidationException("Логин пользователя пуст или содержит пробелы.");
         }
         if (user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@")) {
