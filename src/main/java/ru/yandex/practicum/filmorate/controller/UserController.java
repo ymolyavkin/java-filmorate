@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import ru.yandex.practicum.filmorate.exception.UserAlreadyExistException;
@@ -14,6 +15,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -31,6 +33,10 @@ public class UserController {
             log.debug("Логин пользователя пуст или содержит пробелы.");
             throw new ValidationException("Логин пользователя пуст или содержит пробелы.");
         }
+        /*if (user.getId() == null || user.getLogin().isBlank() || user.getLogin().contains(" ")) {
+            log.debug("Логин пользователя пуст или содержит пробелы.");
+            throw new ValidationException("Логин пользователя пуст или содержит пробелы.");
+        }*/
         if (user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@")) {
             log.debug("Адрес электронной почты не прошел проверку.");
             throw new ValidationException("Адрес электронной почты не прошел проверку.");
@@ -39,10 +45,10 @@ public class UserController {
             log.debug("Некорректная дата рождения.");
             throw new ValidationException("Некорректная дата рождения.");
         }
-        if (users.containsKey(user.getId())) {
+        /*if (users.containsKey(user.getId())) {
             log.debug("Пользователь с id " + user.getId() + " уже зарегистрирован.");
             throw new UserAlreadyExistException("Пользователь с id " + user.getId() + " уже зарегистрирован.");
-        }
+        }*/
         // TODO: 06.04.2023 this check should be moved to the toString() method
         if (user.getName() == null || user.getName().isBlank()) {
             log.debug("Имя пользователя пусто");
