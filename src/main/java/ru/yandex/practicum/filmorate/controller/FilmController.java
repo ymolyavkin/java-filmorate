@@ -41,7 +41,8 @@ public class FilmController {
             log.debug("Некорректная дата релиза.");
             throw new ValidationException("Некорректная дата релиза.");
         }
-        if (film.getDuration().isNegative()) {
+        //  if (film.getDuration().isNegative()) {
+        if (film.getDuration() < 0) {
             log.debug("Продолжительность фильма должна быть положительной.");
             throw new ValidationException("Продолжительность фильма должна быть положительной.");
         }
@@ -67,7 +68,8 @@ public class FilmController {
             log.debug("Некорректная дата релиза.");
             throw new ValidationException("Некорректная дата релиза.");
         }
-        if (film.getDuration().isNegative()) {
+        //if (film.getDuration().isNegative()) {
+        if (film.getDuration()<0) {
             log.debug("Продолжительность фильма должна быть положительной.");
             throw new ValidationException("Продолжительность фильма должна быть положительной.");
         }
