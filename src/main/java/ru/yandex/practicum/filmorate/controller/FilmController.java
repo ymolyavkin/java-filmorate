@@ -56,6 +56,10 @@ public class FilmController {
 
     @PutMapping
     public Film put(@RequestBody Film film) {
+        if (!films.containsKey(film.getId())) {
+            log.debug("Фильм с id " + film.getId() + " не найден.");
+            throw new ValidationException("Фильм с id " + film.getId() + " не найден.");
+        }
         if (film.getName() == null || film.getName().isBlank()) {
             log.debug("Название фильма не может быть пустым.");
             throw new InvalidFilmNameException("Название фильма не может быть пустым.");
