@@ -8,9 +8,6 @@ import ru.yandex.practicum.filmorate.exception.UserAlreadyExistException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashMap;
@@ -41,7 +38,6 @@ public class FilmController {
             log.debug("Некорректная дата релиза.");
             throw new ValidationException("Некорректная дата релиза.");
         }
-        //  if (film.getDuration().isNegative()) {
         if (film.getDuration() < 0) {
             log.debug("Продолжительность фильма должна быть положительной.");
             throw new ValidationException("Продолжительность фильма должна быть положительной.");
@@ -72,8 +68,7 @@ public class FilmController {
             log.debug("Некорректная дата релиза.");
             throw new ValidationException("Некорректная дата релиза.");
         }
-        //if (film.getDuration().isNegative()) {
-        if (film.getDuration()<0) {
+        if (film.getDuration() < 0) {
             log.debug("Продолжительность фильма должна быть положительной.");
             throw new ValidationException("Продолжительность фильма должна быть положительной.");
         }
