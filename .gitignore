@@ -41,6 +41,7 @@ build/
 ### GIT ###
 api-tests.yml
 checkstyle.xml
+.github/workflows/api-tests.yml
 mvn
 .DS_Store
 .db
