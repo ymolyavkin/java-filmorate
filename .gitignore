@@ -37,3 +37,13 @@ build/
 *.jar
 *.war
 *.DS_Store
+
+### GIT ###
+api-tests.yml
+checkstyle.xml
+mvn
+.DS_Store
+.db
+.log
+out/
+target/
