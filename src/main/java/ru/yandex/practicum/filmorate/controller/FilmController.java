@@ -72,9 +72,7 @@ public class FilmController {
             log.debug("Продолжительность фильма должна быть положительной.");
             throw new ValidationException("Продолжительность фильма должна быть положительной.");
         }
-
         films.put(film.getId(), film);
-
         return film;
     }
 }
