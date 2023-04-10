@@ -9,6 +9,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.springframework.boot.test.web.client.TestRestTemplate;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -21,13 +22,13 @@ class FilmorateApplicationTests {
     @DisplayName("/return empty ")
     void shouldReturnEmpty() {
 
-        URI targetUrl= UriComponentsBuilder.fromUriString("/films")
+        URI targetUrl = UriComponentsBuilder.fromUriString("/films")
 
                 .build()
                 .encode()
                 .toUri();
         String message = this.restTemplate.getForObject(targetUrl, String.class);
-        System.out.println("message: " +  message);
+        System.out.println("message: " + message);
 
         assertEquals("[]", message);
     }
