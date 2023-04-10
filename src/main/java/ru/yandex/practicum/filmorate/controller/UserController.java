@@ -32,7 +32,7 @@ public class UserController {
             throw new ValidationException("Логин пользователя пуст или содержит пробелы.");
         }
         if (user.getName() == null || user.getName().isBlank()) {
-            user.setId(user.getId()+1);
+            user.setId(user.getId() + 1);
             user.setName(user.getLogin());
         }
         if (user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@")) {
