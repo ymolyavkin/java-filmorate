@@ -28,7 +28,7 @@ public class UserController {
     @PostMapping
     public User create(@RequestBody User user) {
         if (user.getLogin() == null || user.getLogin().isBlank() || user.getLogin().contains(" ")) {
-            log.debug("Логин пользователя пуст или содержит пробелы.");
+            log.error("Логин пользователя пуст или содержит пробелы.");
             throw new ValidationException("Логин пользователя пуст или содержит пробелы.");
         }
         if (user.getName() == null || user.getName().isBlank()) {
@@ -36,16 +36,16 @@ public class UserController {
             user.setName(user.getLogin());
         }
         if (user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@")) {
-            log.debug("Адрес электронной почты не прошел проверку.");
+            log.error("Адрес электронной почты не прошел проверку.");
             throw new ValidationException("Адрес электронной почты не прошел проверку.");
         }
         if (user.getBirthday().isAfter(LocalDate.now())) {
-            log.debug("Некорректная дата рождения.");
+            log.error("Некорректная дата рождения.");
             throw new ValidationException("Некорректная дата рождения.");
         }
         if (user.getName() == null || user.getName().isBlank()) {
 
-            log.debug("Имя пользователя пусто");
+            log.error("Имя пользователя пусто");
             System.out.println("Имя пользователя пусто");
         }
 
@@ -56,19 +56,19 @@ public class UserController {
     @PutMapping
     public User put(@RequestBody User user) {
         if (!users.containsKey(user.getId())) {
-            log.debug("Пользователь с id " + user.getId() + " не найден.");
+            log.error("Пользователь с id " + user.getId() + " не найден.");
             throw new ValidationException("Пользователь с id " + user.getId() + " не найден.");
         }
         if (user.getLogin() == null || user.getLogin().isBlank() || user.getLogin().contains(" ")) {
-            log.debug("Логин пользователя пуст или содержит пробелы.");
+            log.error("Логин пользователя пуст или содержит пробелы.");
             throw new ValidationException("Логин пользователя пуст или содержит пробелы.");
         }
         if (user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@")) {
-            log.debug("Адрес электронной почты не прошел проверку.");
+            log.error("Адрес электронной почты не прошел проверку.");
             throw new ValidationException("Адрес электронной почты не прошел проверку.");
         }
         if (user.getBirthday().isAfter(LocalDate.now())) {
-            log.debug("Некорректная дата рождения.");
+            log.error("Некорректная дата рождения.");
             throw new ValidationException("Некорректная дата рождения.");
         }
         users.put(user.getId(), user);
