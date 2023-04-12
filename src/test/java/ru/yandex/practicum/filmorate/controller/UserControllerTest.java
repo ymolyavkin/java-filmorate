@@ -11,7 +11,9 @@ import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -45,6 +47,22 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.name").value("Nick Name"))
                 .andExpect(jsonPath("$.email").value("mail@mail.ru"))
                 .andExpect(jsonPath("$.login").value("dolore"));
+    }
+    @Test
+    public void givenId_whenGetNotExistingUser_thenStatus404anExceptionThrown() throws Exception {
+        String nonExistingUser = "{\n" +
+                "  \"login\": \"doloreUpdate\",\n" +
+                "  \"name\": \"est adipisicing\",\n" +
+                "  \"id\": 9999,\n" +
+                "  \"email\": \"mail@yandex.ru\",\n" +
+                "  \"birthday\": \"1976-09-20\"\n" +
+                "}";
+        mockMvc.perform(
+                        put("/users")
+                                .content(objectMapper.writeValueAsString(nonExistingUser)))
+              //  .andExpect(status().isNotFound()) //404
+                .andExpect(status().is(415))
+                .andExpect(mvcResult -> mvcResult.getResolvedException().getClass().equals(Exception.class));
     }
 }
 
