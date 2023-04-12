@@ -19,6 +19,11 @@ import java.util.Map;
 public class FilmController {
     private static final Logger log = LoggerFactory.getLogger(FilmController.class);
     private final Map<Integer, Film> films = new HashMap<>();
+    private int id = 0;
+
+    private int generationId() {
+        return ++id;
+    }
 
     @GetMapping
     public Collection<Film> findAll() {
@@ -27,6 +32,7 @@ public class FilmController {
 
     @PostMapping
     public Film create(@RequestBody Film film) {
+        film.setId(generationId());
         if (film.getName() == null || film.getName().isBlank()) {
             log.error("Название фильма не может быть пустым.");
             throw new InvalidFilmNameException("Название фильма не может быть пустым.");
