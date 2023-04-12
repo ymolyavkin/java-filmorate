@@ -34,7 +34,7 @@ public class FilmController {
     @PostMapping
     public Film create(@RequestBody Film film) {
         film.setId(generationId());
-        if (Validator.validationIsEmpty(film.getName())) {
+        if (Validator.validationFailedIsEmpty(film.getName())) {
             log.error("Название фильма не может быть пустым.");
             throw new InvalidFilmNameException("Название фильма не может быть пустым.");
         }
@@ -64,15 +64,15 @@ public class FilmController {
             log.error("Фильм с id " + film.getId() + " не найден.");
             throw new ValidationException("Фильм с id " + film.getId() + " не найден.");
         }
-        if (Validator.validationIsEmpty(film.getName())) {
+        if (Validator.validationFailedIsEmpty(film.getName())) {
             log.error("Название фильма не может быть пустым.");
             throw new InvalidFilmNameException("Название фильма не может быть пустым.");
         }
-        if (film.getDescription().length() > 200) {
+        if (Validator.validationLengthStringOverLimit(film.getDescription(), 200)) {
             log.error("Длина описания превышает допустимый предел.");
             throw new ValidationException("Длина описания превышает допустимый предел.");
         }
-        if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
+        if (Validator.validationDateIsBeforeFirstFilm(film.getReleaseDate())) {
             log.error("Некорректная дата релиза.");
             throw new ValidationException("Некорректная дата релиза.");
         }

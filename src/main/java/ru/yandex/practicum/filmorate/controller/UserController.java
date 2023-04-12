@@ -14,8 +14,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import static ru.yandex.practicum.filmorate.controller.validation.Validator.validationIsEmptyAndContainsSpaces;
-
 
 @RestController
 @RequestMapping("/users")
@@ -36,24 +34,22 @@ public class UserController {
     @PostMapping
     public User create(@RequestBody User user) {
         user.setId(generationId());
-        //if (user.getLogin() == null || user.getLogin().isBlank() || user.getLogin().contains(" ")) {
-        if (Validator.validationIsEmptyAndContainsSpaces(user.getLogin())) {
+        if (Validator.validationFailedIsEmptyAndContainsSpaces(user.getLogin())) {
             log.error("Логин пользователя пуст или содержит пробелы.");
             throw new ValidationException("Логин пользователя пуст или содержит пробелы.");
         }
-        if (user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@")) {
+        if (Validator.validationFailedEmail(user.getEmail())) {
             log.error("Адрес электронной почты не прошел проверку.");
             throw new ValidationException("Адрес электронной почты не прошел проверку.");
         }
-        if (user.getBirthday().isAfter(LocalDate.now())) {
+        if (Validator.validationFailedBirthdayIsAfterNow(user.getBirthday())) {
             log.error("Некорректная дата рождения.");
             throw new ValidationException("Некорректная дата рождения.");
         }
-       // if (user.getName() == null || user.getName().isBlank()) {
-        if (Validator.validationIsEmpty(user.getName())) {
+        if (Validator.validationFailedIsEmpty(user.getName())) {
             user.setId(2);
             user.setName(user.getLogin());
-            log.error("Имя пользователя пусто");
+            log.debug("Имя пользователя пусто");
             System.out.println("Имя пользователя пусто");
         }
 
@@ -67,15 +63,15 @@ public class UserController {
             log.error("Пользователь с id " + user.getId() + " не найден.");
             throw new ValidationException("Пользователь с id " + user.getId() + " не найден.");
         }
-        if (Validator.validationIsEmptyAndContainsSpaces(user.getLogin())) {
+        if (Validator.validationFailedIsEmptyAndContainsSpaces(user.getLogin())) {
             log.error("Логин пользователя пуст или содержит пробелы.");
             throw new ValidationException("Логин пользователя пуст или содержит пробелы.");
         }
-        if (user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@")) {
+        if (Validator.validationFailedEmail(user.getEmail())) {
             log.error("Адрес электронной почты не прошел проверку.");
             throw new ValidationException("Адрес электронной почты не прошел проверку.");
         }
-        if (user.getBirthday().isAfter(LocalDate.now())) {
+        if (Validator.validationFailedBirthdayIsAfterNow(user.getBirthday())) {
             log.error("Некорректная дата рождения.");
             throw new ValidationException("Некорректная дата рождения.");
         }
