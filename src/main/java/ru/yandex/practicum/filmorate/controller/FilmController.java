@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.controller.validation.Validator;
 import ru.yandex.practicum.filmorate.exception.InvalidFilmNameException;
 import ru.yandex.practicum.filmorate.exception.UserAlreadyExistException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
@@ -33,7 +34,7 @@ public class FilmController {
     @PostMapping
     public Film create(@RequestBody Film film) {
         film.setId(generationId());
-        if (film.getName() == null || film.getName().isBlank()) {
+        if (Validator.validationIsEmpty(film.getName())) {
             log.error("Название фильма не может быть пустым.");
             throw new InvalidFilmNameException("Название фильма не может быть пустым.");
         }
@@ -63,7 +64,7 @@ public class FilmController {
             log.error("Фильм с id " + film.getId() + " не найден.");
             throw new ValidationException("Фильм с id " + film.getId() + " не найден.");
         }
-        if (film.getName() == null || film.getName().isBlank()) {
+        if (Validator.validationIsEmpty(film.getName())) {
             log.error("Название фильма не может быть пустым.");
             throw new InvalidFilmNameException("Название фильма не может быть пустым.");
         }
