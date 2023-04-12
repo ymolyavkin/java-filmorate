@@ -19,6 +19,11 @@ import java.util.Map;
 public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
     private final Map<Integer, User> users = new HashMap<>();
+    private int id = 0;
+
+    private int generationId() {
+        return ++id;
+    }
 
     @GetMapping
     public Collection<User> findAll() {
@@ -27,14 +32,15 @@ public class UserController {
 
     @PostMapping
     public User create(@RequestBody User user) {
+        user.setId(generationId());
         if (user.getLogin() == null || user.getLogin().isBlank() || user.getLogin().contains(" ")) {
             log.error("Логин пользователя пуст или содержит пробелы.");
             throw new ValidationException("Логин пользователя пуст или содержит пробелы.");
         }
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setId(user.getId() + 1);
+        /*if (user.getName() == null || user.getName().isBlank()) {
+           // user.setId(user.getId() + 1);
             user.setName(user.getLogin());
-        }
+        }*/
         if (user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@")) {
             log.error("Адрес электронной почты не прошел проверку.");
             throw new ValidationException("Адрес электронной почты не прошел проверку.");
@@ -44,7 +50,8 @@ public class UserController {
             throw new ValidationException("Некорректная дата рождения.");
         }
         if (user.getName() == null || user.getName().isBlank()) {
-
+            user.setId(2);
+            user.setName(user.getLogin());
             log.error("Имя пользователя пусто");
             System.out.println("Имя пользователя пусто");
         }
