@@ -19,10 +19,24 @@ class FilmorateApplicationTests {
 
 
     @Test
-    @DisplayName("/return empty ")
-    void shouldReturnEmpty() {
+    @DisplayName("/return empty films")
+    void shouldReturnEmptyFilms() {
 
         URI targetUrl = UriComponentsBuilder.fromUriString("/films")
+
+                .build()
+                .encode()
+                .toUri();
+        String message = this.restTemplate.getForObject(targetUrl, String.class);
+        System.out.println("message: " + message);
+
+        assertEquals("[]", message);
+    }
+    @Test
+    @DisplayName("/return empty users")
+    void shouldReturnEmptyUsers() {
+
+        URI targetUrl = UriComponentsBuilder.fromUriString("/users")
 
                 .build()
                 .encode()

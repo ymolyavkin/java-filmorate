@@ -2,63 +2,64 @@ package ru.yandex.practicum.filmorate.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.Film;
 
 import java.time.LocalDate;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class UserControllerTest {
+class FilmControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
 
-    private User createtestUser() {
-        User user = new User("Nick Name", "mail@mail.ru", "dolore", LocalDate.of(1946, 8, 20));
-        return user;
+    private Film createTestFilm() {
+        Film film = new Film("nisi eiusmod", "adipisicing", LocalDate.of(1967, 3, 25), 100);
+        return film;
     }
 
     @Test
-    public void updateUser_whenAdd_thenStatus200andUserReturned() throws Exception {
-        User user = createtestUser();
+    public void givenFilm_whenAdd_thenStatus200andFilmReturned() throws Exception {
+        Film film = createTestFilm();
 
         mockMvc.perform(
-                        post("/users")
-                                .content(objectMapper.writeValueAsString(user))
+                        post("/films")
+                                .content(objectMapper.writeValueAsString(film))
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").isNumber())
-                .andExpect(jsonPath("$.name").value("Nick Name"))
-                .andExpect(jsonPath("$.email").value("mail@mail.ru"))
-                .andExpect(jsonPath("$.login").value("dolore"));
+                .andExpect(jsonPath("$.name").value("nisi eiusmod"))
+                .andExpect(jsonPath("$.releaseDate").value("1967-03-25"))
+                .andExpect(jsonPath("$.duration").value("100"));
     }
 
     @Test
-    public void givenId_whenGetNotExistingUser_thenStatus404anExceptionThrown() throws Exception {
-        String nonExistingUser = "{\n" +
-                "  \"login\": \"doloreUpdate\",\n" +
-                "  \"name\": \"est adipisicing\",\n" +
+    public void updateFilmWhenGetNotExistingFilm_thenStatus404anExceptionThrown() throws Exception {
+        String nonExistingFilm = "{\n" +
                 "  \"id\": 9999,\n" +
-                "  \"email\": \"mail@yandex.ru\",\n" +
-                "  \"birthday\": \"1976-09-20\"\n" +
+                "  \"name\": \"Film Updated\",\n" +
+                "  \"releaseDate\": \"1989-04-17\",\n" +
+                "  \"description\": \"New film update decription\",\n" +
+                "  \"duration\": 190,\n" +
+                "  \"rate\": 4\n" +
                 "}";
 
         mockMvc.perform(
-                        put("/users")
-                                .content(objectMapper.writeValueAsString(nonExistingUser)))
+                        put("/films")
+                                .content(objectMapper.writeValueAsString(nonExistingFilm)))
                 .andExpect(status().is(415))
                 .andExpect(mvcResult -> mvcResult.getResolvedException().getClass().equals(Exception.class));
     }
@@ -67,7 +68,8 @@ class UserControllerTest {
     public void givenEmptyWhenGetFilmsThenStatus200() throws Exception {
 
         mockMvc.perform(
-                        get("/users"))
+                        get("/films"))
                 .andExpect(status().isOk());
     }
 }
+
