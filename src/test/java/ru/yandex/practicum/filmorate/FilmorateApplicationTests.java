@@ -32,6 +32,7 @@ class FilmorateApplicationTests {
 
         assertEquals("[]", message);
     }
+
     @Test
     @DisplayName("/return empty users")
     void shouldReturnEmptyUsers() {
