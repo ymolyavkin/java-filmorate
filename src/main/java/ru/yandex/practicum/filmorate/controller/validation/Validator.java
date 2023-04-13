@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.controller.validation;
 
-import org.springframework.cglib.core.Local;
 
 import java.time.LocalDate;
 
@@ -24,6 +23,7 @@ public class Validator {
     public static boolean validationLengthStringOverLimit(String s, int limit) {
         return (s.length() > limit);
     }
+
     public static boolean validationDateIsBeforeFirstFilm(LocalDate date) {
         return (date.isBefore(LocalDate.of(1895, 12, 28)));
     }
