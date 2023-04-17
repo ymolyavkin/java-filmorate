@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.controller.validation;
 
 import org.junit.jupiter.api.Test;
+import ru.yandex.practicum.filmorate.validation.Validator;
 
 import java.time.LocalDate;
 import java.util.stream.Collectors;
