@@ -21,7 +21,14 @@ public class User {
         this.email = email;
         this.login = login;
         this.birthday = birthday;
-        friends=new HashSet<>();
+        friends = new HashSet<>();
+    }
+
+    public boolean addFriend(Long friendId) {
+        return friends.add(friendId);
+    }
+    public boolean deleteFriend(Long friendId) {
+        return friends.remove(friendId);
     }
 }
 
