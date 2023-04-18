@@ -72,6 +72,11 @@ public class UserService {
     public Map<Integer, User> findAll() {
    return userStorage.findAll();
     }
+    public User findUserById(Integer userId) {
+        log.debug("Id user: " + userId);
+
+        return userStorage.findUserById(userId);
+    }
     //**********
     /*
 

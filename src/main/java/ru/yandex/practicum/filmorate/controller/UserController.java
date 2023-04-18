@@ -68,6 +68,10 @@ public class UserController {
 
         return userService.findAll();
     }
+    @GetMapping("{userId}")
+    public User findUserById(@PathVariable("userId") Integer userId) {
+        return userService.findUserById(userId);
+    }
 
     @PostMapping
     public User create(@RequestBody User user) {

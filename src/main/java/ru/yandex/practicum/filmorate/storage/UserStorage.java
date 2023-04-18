@@ -7,6 +7,6 @@ public interface UserStorage {
     public Map<Integer, User> findAll();
     public void addUser(User user);
     public void updateUser(User user);
-    public User findUserById(Long userId);
+    public User findUserById(Integer userId);
     public void deleteUser(User user);
 }
