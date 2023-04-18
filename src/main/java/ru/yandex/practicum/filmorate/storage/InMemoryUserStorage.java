@@ -9,29 +9,30 @@ import java.util.Map;
 
 @Component
 public class InMemoryUserStorage implements UserStorage {
+    private static Integer id = 0;
     private final Map<Integer, User> users = new HashMap<>();
     @Override
-    public Collection<User> findAll() {
-        return null;
+    public Map<Integer, User> findAll() {
+        return users;
     }
 
     @Override
-    public User addUser(User user) {
-        return null;
+    public void addUser(User user) {
+        users.put(user.getId(), user);
     }
 
     @Override
-    public User updateUser(User user) {
-        return null;
+    public void updateUser(User user) {
+        users.put(user.getId(), user);
     }
 
     @Override
     public User findUserById(Long userId) {
-        return null;
+        return users.get(userId);
     }
 
     @Override
-    public User deleteUser(User user) {
-        return null;
+    public void deleteUser(User user) {
+        users.remove(user.getId());
     }
 }

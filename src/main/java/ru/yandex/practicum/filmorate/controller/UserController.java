@@ -4,15 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.validation.Validator;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
 /*
@@ -59,7 +55,7 @@ public class PostController {
 @RequestMapping("/users")
 public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
-    private final Map<Integer, User> users = new HashMap<>();
+    //private final Map<Integer, User> users = new HashMap<>();
     private final UserService userService;
 
     @Autowired
@@ -68,8 +64,9 @@ public class UserController {
     }
 
     @GetMapping
-    public Collection<User> findAll() {
-        return null;
+    public Map<Integer, User> findAll() {
+
+        return userService.findAll();
     }
 
     @PostMapping
