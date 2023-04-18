@@ -3,7 +3,9 @@ package ru.yandex.practicum.filmorate.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.validation.Validator;
 import ru.yandex.practicum.filmorate.exception.InvalidFilmNameException;
 import ru.yandex.practicum.filmorate.exception.UserAlreadyExistException;
@@ -20,7 +22,12 @@ import java.util.Map;
 public class FilmController {
     private static final Logger log = LoggerFactory.getLogger(FilmController.class);
     private final Map<Integer, Film> films = new HashMap<>();
+    private final FilmService filmService;
     private int id = 0;
+    @Autowired
+    public FilmController(FilmService filmService) {
+        this.filmService = filmService;
+    }
 
     private int generationId() {
         return ++id;

@@ -1,7 +1,9 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.validation.Validator;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
@@ -20,6 +22,12 @@ public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
     private final Map<Integer, User> users = new HashMap<>();
     private int id = 0;
+    private final UserService userService;
+
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     private int generationId() {
         return ++id;
