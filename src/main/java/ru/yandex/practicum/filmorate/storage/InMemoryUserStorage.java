@@ -9,8 +9,8 @@ import java.util.Map;
 
 @Component
 public class InMemoryUserStorage implements UserStorage {
-    private static Integer id = 0;
     private final Map<Integer, User> users = new HashMap<>();
+
     @Override
     public Map<Integer, User> findAll() {
         return users;

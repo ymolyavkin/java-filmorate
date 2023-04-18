@@ -31,4 +31,8 @@ public class Film {
     public boolean deleteLike(Long userId) {
         return likes.remove(userId);
     }
+
+    public int numberOfLikes() {
+        return likes.size();
+    }
 }
