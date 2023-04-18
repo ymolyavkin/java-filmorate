@@ -15,13 +15,51 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+/*
+@RestController
+public class PostController {
+    private final PostService postService;
 
+    public PostController(PostService postService) {
+        this.postService = postService;
+    }
+
+    @GetMapping("/posts")
+    public List<Post> findAll(
+            @RequestParam(defaultValue = "0", required = false) Integer page,
+            @RequestParam(defaultValue = "10", required = false) Integer size,
+            @RequestParam(defaultValue = DESCENDING_ORDER, required = false) String sort
+    ) {
+        if (!SORTS.contains(sort)) {
+            throw new IncorrectParameterException("sort");
+        }
+        if (page < 0) {
+            throw new IncorrectParameterException("page");
+        }
+        if (size <= 0) {
+            throw new IncorrectParameterException("size");
+        }
+        Integer from = page * size;
+        return postService.findAll(size, from, sort);
+    }
+
+    @PostMapping(value = "/post")
+    public Post create(@RequestBody Post post) {
+        return postService.create(post);
+    }
+
+    @GetMapping("/post/{postId}")
+    public Post findPost(@PathVariable("postId") Integer postId) {
+        return postService.findPostById(postId);
+    }
+}
+
+ */
 @RestController
 @RequestMapping("/users")
 public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
     private final Map<Integer, User> users = new HashMap<>();
-    private int id = 0;
     private final UserService userService;
 
     @Autowired
@@ -29,60 +67,19 @@ public class UserController {
         this.userService = userService;
     }
 
-    private int generationId() {
-        return ++id;
-    }
-
     @GetMapping
     public Collection<User> findAll() {
-        return users.values();
+        return null;
     }
 
     @PostMapping
     public User create(@RequestBody User user) {
-        user.setId(generationId());
-        if (Validator.validationFailedIsEmptyAndContainsSpaces(user.getLogin())) {
-            log.error("Логин пользователя пуст или содержит пробелы.");
-            throw new ValidationException("Логин пользователя пуст или содержит пробелы.");
-        }
-        if (Validator.validationFailedEmail(user.getEmail())) {
-            log.error("Адрес электронной почты не прошел проверку.");
-            throw new ValidationException("Адрес электронной почты не прошел проверку.");
-        }
-        if (Validator.validationFailedBirthdayIsAfterNow(user.getBirthday())) {
-            log.error("Некорректная дата рождения.");
-            throw new ValidationException("Некорректная дата рождения.");
-        }
-        if (Validator.validationFailedIsEmpty(user.getName())) {
-            user.setId(2);
-            user.setName(user.getLogin());
-            log.debug("Имя пользователя пусто");
-            System.out.println("Имя пользователя пусто");
-        }
-
-        users.put(user.getId(), user);
-        return user;
+        return userService.create(user);
     }
 
     @PutMapping
     public User put(@RequestBody User user) {
-        if (!users.containsKey(user.getId())) {
-            log.error("Пользователь с id " + user.getId() + " не найден.");
-            throw new ValidationException("Пользователь с id " + user.getId() + " не найден.");
-        }
-        if (Validator.validationFailedIsEmptyAndContainsSpaces(user.getLogin())) {
-            log.error("Логин пользователя пуст или содержит пробелы.");
-            throw new ValidationException("Логин пользователя пуст или содержит пробелы.");
-        }
-        if (Validator.validationFailedEmail(user.getEmail())) {
-            log.error("Адрес электронной почты не прошел проверку.");
-            throw new ValidationException("Адрес электронной почты не прошел проверку.");
-        }
-        if (Validator.validationFailedBirthdayIsAfterNow(user.getBirthday())) {
-            log.error("Некорректная дата рождения.");
-            throw new ValidationException("Некорректная дата рождения.");
-        }
-        users.put(user.getId(), user);
+      userService.put(user);
 
         return user;
     }
