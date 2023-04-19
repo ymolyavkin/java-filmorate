@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.model;
 
 import lombok.Data;
+import ru.yandex.practicum.filmorate.validation.Birthday;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
@@ -19,6 +20,7 @@ public class User {
     @NotBlank
     @Pattern(regexp = "^^\\S+$", message = "Логин пользователя пуст или содержит пробелы.")
     private final String login;
+    @Birthday
     private final LocalDate birthday;
     private Set<Long> friends;
 

@@ -40,13 +40,13 @@ public class UserService {
         if (Validator.validationFailedBirthdayIsAfterNow(user.getBirthday())) {
             log.error("Некорректная дата рождения.");
             throw new ValidationException("Некорректная дата рождения.");
-        }
+        }*/
         if (Validator.validationFailedIsEmpty(user.getName())) {
             user.setId(2);
             user.setName(user.getLogin());
             log.debug("Имя пользователя пусто");
             System.out.println("Имя пользователя пусто");
-        }*/
+        }
         userStorage.addUser(user);
 
         return user;
