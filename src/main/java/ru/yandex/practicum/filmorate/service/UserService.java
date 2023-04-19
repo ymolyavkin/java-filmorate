@@ -29,7 +29,7 @@ public class UserService {
 
     public User create(@RequestBody User user) {
         user.setId(generationId());
-        if (Validator.validationFailedIsEmptyAndContainsSpaces(user.getLogin())) {
+        /*if (Validator.validationFailedIsEmptyAndContainsSpaces(user.getLogin())) {
             log.error("Логин пользователя пуст или содержит пробелы.");
             throw new ValidationException("Логин пользователя пуст или содержит пробелы.");
         }
@@ -46,7 +46,7 @@ public class UserService {
             user.setName(user.getLogin());
             log.debug("Имя пользователя пусто");
             System.out.println("Имя пользователя пусто");
-        }
+        }*/
         userStorage.addUser(user);
 
         return user;
