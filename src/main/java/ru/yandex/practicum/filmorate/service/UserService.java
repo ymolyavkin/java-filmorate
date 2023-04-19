@@ -53,7 +53,7 @@ public class UserService {
     }
     public User put(@RequestBody User user) {
 
-        if (Validator.validationFailedIsEmptyAndContainsSpaces(user.getLogin())) {
+        /*if (Validator.validationFailedIsEmptyAndContainsSpaces(user.getLogin())) {
             log.error("Логин пользователя пуст или содержит пробелы.");
             throw new ValidationException("Логин пользователя пуст или содержит пробелы.");
         }
@@ -64,7 +64,7 @@ public class UserService {
         if (Validator.validationFailedBirthdayIsAfterNow(user.getBirthday())) {
             log.error("Некорректная дата рождения.");
             throw new ValidationException("Некорректная дата рождения.");
-        }
+        }*/
         userStorage.updateUser(user);
 
         return user;

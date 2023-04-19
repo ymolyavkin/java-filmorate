@@ -67,12 +67,12 @@ public class FilmController {
     }
 
     @PutMapping
-    public Film put(@RequestBody Film film) {
+    public Film put(@Valid @RequestBody Film film) {
         if (!films.containsKey(film.getId())) {
             log.error("Фильм с id " + film.getId() + " не найден.");
             throw new ValidationException("Фильм с id " + film.getId() + " не найден.");
         }
-        if (Validator.validationFailedIsEmpty(film.getName())) {
+        /*if (Validator.validationFailedIsEmpty(film.getName())) {
             log.error("Название фильма не может быть пустым.");
             throw new InvalidFilmNameException("Название фильма не может быть пустым.");
         }
@@ -87,7 +87,7 @@ public class FilmController {
         if (film.getDuration() < 0) {
             log.error("Продолжительность фильма должна быть положительной.");
             throw new ValidationException("Продолжительность фильма должна быть положительной.");
-        }
+        }*/
         films.put(film.getId(), film);
         return film;
     }
