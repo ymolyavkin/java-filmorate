@@ -12,10 +12,12 @@ import java.util.Set;
 @Data
 public class User {
     private int id;
-    @NotBlank
+
     private String name;
     @Pattern(regexp = "^.+@.+\\..+$", message = "Некорректный адрес электронной почты")
     private final String email;
+    @NotBlank
+    @Pattern(regexp = "^^\\S+$", message = "Логин пользователя пуст или содержит пробелы.")
     private final String login;
     private final LocalDate birthday;
     private Set<Long> friends;
