@@ -14,7 +14,7 @@ public class User {
     private int id;
     @NotBlank
     private String name;
-    @Pattern(regexp = "^.+@.+\\..+$")
+    @Pattern(regexp = "^.+@.+\\..+$", message = "Некорректный адрес электронной почты")
     private final String email;
     private final String login;
     private final LocalDate birthday;
