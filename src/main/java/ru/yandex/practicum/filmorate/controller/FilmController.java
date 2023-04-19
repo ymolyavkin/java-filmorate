@@ -12,6 +12,7 @@ import ru.yandex.practicum.filmorate.exception.UserAlreadyExistException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashMap;
@@ -39,9 +40,9 @@ public class FilmController {
     }
 
     @PostMapping
-    public Film create(@RequestBody Film film) {
+    public Film create(@Valid @RequestBody Film film) {
         film.setId(generationId());
-        if (Validator.validationFailedIsEmpty(film.getName())) {
+        /*if (Validator.validationFailedIsEmpty(film.getName())) {
             log.error("Название фильма не может быть пустым.");
             throw new InvalidFilmNameException("Название фильма не может быть пустым.");
         }
@@ -56,7 +57,7 @@ public class FilmController {
         if (film.getDuration() < 0) {
             log.error("Продолжительность фильма должна быть положительной.");
             throw new ValidationException("Продолжительность фильма должна быть положительной.");
-        }
+        }*/
         if (films.containsKey(film.getId())) {
             log.error("Фильм с id " + film.getId() + " уже есть в коллекции.");
             throw new UserAlreadyExistException("Фильм с id " + film.getId() + " уже есть в коллекции.");
