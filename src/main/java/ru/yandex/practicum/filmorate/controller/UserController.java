@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
 import java.util.Map;
+import java.util.Set;
 
 /*
 @RestController
@@ -69,9 +70,27 @@ public class UserController {
 
         return userService.findAll();
     }
+
     @GetMapping("{userId}")
     public User findUserById(@PathVariable("userId") Integer userId) {
         return userService.findUserById(userId);
+    }
+
+    @GetMapping("{userId}/friends")
+    public Set<Integer> findFriends(@PathVariable("userId") Integer userId) {
+        User user = userService.findUserById(userId);
+        Set<Integer> friends = user.getFriends();
+        return friends;
+    }
+
+    @GetMapping("{userId}/friends/common/{otherId}")
+    public Set<Integer> findCommonFriends(@PathVariable("userId") Integer userId,
+                                          @PathVariable("otherId") Integer otherId) {
+
+        User user = userService.findUserById(userId);
+        User other = userService.findUserById(otherId);
+
+        return user.getCommonFriends(other);
     }
 
     @PostMapping
@@ -81,10 +100,11 @@ public class UserController {
 
     @PutMapping
     public User put(@Valid @RequestBody User user) {
-      userService.put(user);
+        userService.put(user);
 
         return user;
     }
+
     @PutMapping("{userId}/friends/{friendId}")
     public Integer addFriend(@PathVariable("userId") Integer userId,
                              @PathVariable("friendId") Integer friendId) {
@@ -99,9 +119,10 @@ public class UserController {
 
         return friendId;
     }
+
     @DeleteMapping("{userId}/friends/{friendId}")
     public Integer deleteFriend(@PathVariable("userId") Integer userId,
-                             @PathVariable("friendId") Integer friendId) {
+                                @PathVariable("friendId") Integer friendId) {
 
         User user = userService.findUserById(userId);
         user.deleteFriend(friendId);

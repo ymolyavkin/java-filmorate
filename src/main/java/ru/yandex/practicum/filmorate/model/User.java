@@ -35,8 +35,18 @@ public class User {
     public boolean addFriend(Integer friendId) {
         return friends.add(friendId);
     }
+
     public boolean deleteFriend(Integer friendId) {
         return friends.remove(friendId);
+    }
+
+    public Set<Integer> getCommonFriends(User otherUser) {
+        if (this.getId() == otherUser.getId()) {
+            return this.getFriends();
+        }
+        Set<Integer> intersection = new HashSet<Integer>(friends);
+        intersection.retainAll(otherUser.getFriends());
+        return intersection;
     }
 }
 
