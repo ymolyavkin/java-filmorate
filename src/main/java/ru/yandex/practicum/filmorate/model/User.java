@@ -22,7 +22,7 @@ public class User {
     private final String login;
     @Birthday
     private final LocalDate birthday;
-    private Set<Long> friends;
+    private Set<Integer> friends;
 
     public User(String name, String email, String login, LocalDate birthday) {
         this.name = name;
@@ -32,10 +32,10 @@ public class User {
         friends = new HashSet<>();
     }
 
-    public boolean addFriend(Long friendId) {
+    public boolean addFriend(Integer friendId) {
         return friends.add(friendId);
     }
-    public boolean deleteFriend(Long friendId) {
+    public boolean deleteFriend(Integer friendId) {
         return friends.remove(friendId);
     }
 }

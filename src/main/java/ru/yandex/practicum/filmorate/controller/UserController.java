@@ -85,4 +85,18 @@ public class UserController {
 
         return user;
     }
+    @PutMapping("{userId}/friends/{friendId}")
+    public Integer addFriend(@PathVariable("userId") Integer userId,
+                             @PathVariable("friendId") Integer friendId) {
+
+        User user = userService.findUserById(userId);
+        user.addFriend(friendId);
+        userService.put(user);
+
+        User friend = userService.findUserById(friendId);
+        friend.addFriend(userId);
+        userService.put(friend);
+
+        return friendId;
+    }
 }
