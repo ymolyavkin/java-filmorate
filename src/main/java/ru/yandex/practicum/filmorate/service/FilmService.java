@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.validation.Validator;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -54,7 +55,11 @@ public class FilmService {
 
     public List<Film> findPopularFilms(Integer count) {
         Map<Integer, Film> allFilms = filmStorage.findAll();
-       return allFilms.values().stream().sorted().limit(count).collect(Collectors.toList());
+        return allFilms.values().stream()
+                .filter(s -> s.numberOfLikes() > 0)
+                .sorted(Collections.reverseOrder())
+                .limit(count)
+                .collect(Collectors.toList());
     }
 
 }

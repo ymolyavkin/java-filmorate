@@ -8,7 +8,7 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.ErrorResponse;
 
-@RestControllerAdvice
+@RestControllerAdvice("ru.yandex.practicum.filmorate.controller")
 public class ErrorHandler {
 
   /*  @ExceptionHandler
