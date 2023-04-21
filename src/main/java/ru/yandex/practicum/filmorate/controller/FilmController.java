@@ -123,4 +123,24 @@ public class FilmController {
     public List<Film> findPopular(@RequestParam(defaultValue = "10", required = false) Integer count) {
         return filmService.findPopularFilms(count);
     }
+    @PutMapping("{filmId}/like/{userId}")
+    public Integer likeFilm(@PathVariable("filmId") Integer filmId,
+                             @PathVariable("userId") Integer userId) {
+
+        Film film = filmService.findFilmById(filmId);
+        film.addLike(userId);
+        filmService.put(film);
+
+        return userId;
+    }
+    @DeleteMapping("{filmId}/like/{userId}")
+    public Integer deleteLikeFilm(@PathVariable("filmId") Integer filmId,
+                            @PathVariable("userId") Integer userId) {
+
+        Film film = filmService.findFilmById(filmId);
+        film.deleteLike(userId);
+        filmService.put(film);
+
+        return userId;
+    }
 }
