@@ -8,6 +8,6 @@ public interface FilmStorage {
     public Map<Integer, Film> findAll();
     public void addFilm(Film film);
     public void updateFilm(Film film);
-    public Film findFilmById(Long filmId);
+    public Film findFilmById(Integer filmId);
     public void deleteFilm(Film film);
 }
