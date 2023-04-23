@@ -7,7 +7,6 @@ import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,6 +14,7 @@ import java.util.Map;
 public class InMemoryUserStorage implements UserStorage {
     private final Map<Integer, User> users = new HashMap<>();
     private static final Logger log = LoggerFactory.getLogger(FilmController.class);
+
     @Override
     public Map<Integer, User> findAll() {
         return users;
@@ -39,7 +39,6 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User findUserById(Integer userId) {
-       // users.forEach((key, value) -> System.out.println(key + "->"+value));
         if (!users.containsKey(userId)) {
             log.error("Пользователь с id " + userId + " не найден.");
             throw new NotFoundException("Пользователь с id " + userId + " не найден.");

@@ -1,55 +1,36 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.validation.Validator;
-import ru.yandex.practicum.filmorate.exception.InvalidFilmNameException;
-import ru.yandex.practicum.filmorate.exception.UserAlreadyExistException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import javax.validation.Valid;
-import java.time.LocalDate;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/films")
 public class FilmController {
-    private static final Logger log = LoggerFactory.getLogger(FilmController.class);
-    //private final Map<Integer, Film> films = new HashMap<>();
     private final FilmService filmService;
+  //  private final UserService userService;
 
-    //private int id = 0;
     @Autowired
-    public FilmController(FilmService filmService) {
+    public FilmController(FilmService filmService, UserService userService) {
+       // this.userService=userService;
         this.filmService = filmService;
     }
 
     @GetMapping
-    public Map<Integer, Film> findAll() {
-        return filmService.findAll();
+    public List<Film> findAll() {
+        return filmService.findAll().values().stream().collect(Collectors.toList());
     }
 
-    /*
-     @GetMapping
-        public Map<Integer, User> findAll() {
-
-            return userService.findAll();
-        }
-     */
-    //  public User create(@Valid @RequestBody User user) {
-    //        return userService.create(user);
-    //    }
     @PostMapping
     public Film create(@Valid @RequestBody Film film) {
+        System.out.println("FROM CONTROLLER create film with id = "+film.getId());
         return filmService.create(film);
         /*if (Validator.validationFailedIsEmpty(film.getName())) {
             log.error("Название фильма не может быть пустым.");
@@ -82,6 +63,10 @@ public class FilmController {
         return user;
     }
      */
+    @GetMapping("{filmId}")
+    public Film findFilmById(@PathVariable("filmId") Integer filmId) {
+        return filmService.findFilmById(filmId);
+    }
 
     @PutMapping
     public Film put(@Valid @RequestBody Film film) {
@@ -123,9 +108,10 @@ public class FilmController {
     public List<Film> findPopular(@RequestParam(defaultValue = "10", required = false) Integer count) {
         return filmService.findPopularFilms(count);
     }
+
     @PutMapping("{filmId}/like/{userId}")
     public Integer likeFilm(@PathVariable("filmId") Integer filmId,
-                             @PathVariable("userId") Integer userId) {
+                            @PathVariable("userId") Integer userId) {
 
         Film film = filmService.findFilmById(filmId);
         film.addLike(userId);
@@ -133,11 +119,13 @@ public class FilmController {
 
         return userId;
     }
+
     @DeleteMapping("{filmId}/like/{userId}")
     public Integer deleteLikeFilm(@PathVariable("filmId") Integer filmId,
-                            @PathVariable("userId") Integer userId) {
+                                  @PathVariable("userId") Integer userId) {
 
         Film film = filmService.findFilmById(filmId);
+      //  User user = user
         film.deleteLike(userId);
         filmService.put(film);
 

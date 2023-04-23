@@ -78,7 +78,6 @@ public class UserService {
     }
 
     public User findUserById(Integer userId) {
-        // System.out.println("service: trying to fing user by id=" + userId);
         return userStorage.findUserById(userId);
     }
 
@@ -116,6 +115,7 @@ public class UserService {
 
         return listFriends;
     }
+
     public List<User> findCommonFriends(int userId, int otherId) {
         List<User> listCommonFriends = new ArrayList<>();
         User user = findUserById(userId);

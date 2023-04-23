@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.controller.FilmController;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.HashMap;
@@ -13,6 +14,7 @@ import java.util.Map;
 public class InMemoryFilmStorage implements FilmStorage {
     private final Map<Integer, Film> films = new HashMap<>();
     private static final Logger log = LoggerFactory.getLogger(FilmController.class);
+
     @Override
     public Map<Integer, Film> findAll() {
         return films;
@@ -25,16 +27,28 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public void updateFilm(Film film) {
+        if (!films.containsKey(film.getId())) {
+            log.error("Фильм с id " + film.getId() + " не найден.");
+            throw new NotFoundException("Фильм с id " + film.getId() + " не найден.");
+        }
         films.put(film.getId(), film);
     }
 
     @Override
     public Film findFilmById(Integer filmId) {
+        if (!films.containsKey(filmId)) {
+            log.error("Фильм с id " + filmId + " не найден.");
+            throw new NotFoundException("Фильм с id " + filmId + " не найден.");
+        }
         return films.get(filmId);
     }
 
     @Override
     public void deleteFilm(Film film) {
+        if (!films.containsKey(film.getId())) {
+            log.error("Фильм с id " + film.getId() + " не найден.");
+            throw new NotFoundException("Фильм с id " + film.getId() + " не найден.");
+        }
         films.remove(film.getId());
     }
 }

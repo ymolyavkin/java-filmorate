@@ -27,13 +27,14 @@ public class FilmService {
     }
 
     private int generationId() {
+        System.out.println("id="+id);
         return ++id;
     }
 
     public Film create(@RequestBody Film film) {
         film.setId(generationId());
         filmStorage.addFilm(film);
-
+        System.out.println("FROM service create film with id = "+film.getId());
         return film;
     }
 
@@ -48,19 +49,20 @@ public class FilmService {
     }
 
     public Film findFilmById(Integer filmId) {
-        log.debug("Id film: " + filmId);
-
         return filmStorage.findFilmById(filmId);
     }
 
     public List<Film> findPopularFilms(Integer count) {
         Map<Integer, Film> allFilms = filmStorage.findAll();
         return allFilms.values().stream()
-                .filter(s -> s.numberOfLikes() > 0)
+                //   .filter(s -> s.numberOfLikes() > 0)
                 .sorted(Collections.reverseOrder())
                 .limit(count)
                 .collect(Collectors.toList());
     }
 
+    public Film findUserById(Integer filmId) {
+        return filmStorage.findFilmById(filmId);
+    }
 }
 
