@@ -8,7 +8,7 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.ErrorResponse;
 
-@RestControllerAdvice("ru.yandex.practicum.filmorate.controller")
+@RestControllerAdvice("ru.yandex.practicum.filmorate")
 public class ErrorHandler {
 
   /*  @ExceptionHandler
@@ -30,6 +30,7 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleNotFoundException(final NotFoundException e) {
+        System.out.println("From ExceptionHandler: NotFoundException");
         return new ErrorResponse(
                 e.getMessage()
         );

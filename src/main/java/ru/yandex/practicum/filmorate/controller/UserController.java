@@ -10,8 +10,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /*
 @RestController
@@ -57,7 +60,7 @@ public class PostController {
 @RequestMapping("/users")
 public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
-    //private final Map<Integer, User> users = new HashMap<>();
+
     private final UserService userService;
 
     @Autowired
@@ -66,9 +69,8 @@ public class UserController {
     }
 
     @GetMapping
-    public Map<Integer, User> findAll() {
-
-        return userService.findAll();
+    public List<User> findAll() {
+        return userService.findAll().values().stream().collect(Collectors.toList());
     }
 
     @GetMapping("{userId}")
@@ -77,60 +79,54 @@ public class UserController {
     }
 
     @GetMapping("{userId}/friends")
-    public Set<Integer> findFriends(@PathVariable("userId") Integer userId) {
-        User user = userService.findUserById(userId);
-        Set<Integer> friends = user.getFriends();
-        return friends;
+    public List<User> findFriends(@PathVariable("userId") Integer userId) {
+        return userService.findFriends(userId);
     }
 
     @GetMapping("{userId}/friends/common/{otherId}")
-    public Set<Integer> findCommonFriends(@PathVariable("userId") Integer userId,
-                                          @PathVariable("otherId") Integer otherId) {
-
-        User user = userService.findUserById(userId);
-        User other = userService.findUserById(otherId);
-
-        return user.getCommonFriends(other);
+    public List<User> findCommonFriends(@PathVariable("userId") Integer userId, @PathVariable("otherId") Integer otherId) {
+        return userService.findCommonFriends(userId, otherId);
     }
 
     @PostMapping
     public User create(@Valid @RequestBody User user) {
+        // System.out.println("CreateUser." + user.getId() + "List Users: " + userService.findAll().values().stream().collect(Collectors.toList()));
         return userService.create(user);
     }
 
     @PutMapping
     public User put(@Valid @RequestBody User user) {
-        userService.put(user);
-
-        return user;
+        // System.out.println("PutUser." + user.getId() + "List Users: " + userService.findAll().values().stream().collect(Collectors.toList()));
+        return userService.put(user);
     }
 
     @PutMapping("{userId}/friends/{friendId}")
-    public Integer addFriend(@PathVariable("userId") Integer userId,
-                             @PathVariable("friendId") Integer friendId) {
+    public Integer addFriend(@PathVariable("userId") Integer userId, @PathVariable("friendId") Integer friendId) {
+        userService.addFriend(userId, friendId);
+        // System.out.println("controller: trying to add a user with id=" + userId + " to a friend with id= " + friendId);
+       /* User user = userService.findUserById(userId);
+        User friend = userService.findUserById(friendId);
 
-        User user = userService.findUserById(userId);
         user.addFriend(friendId);
         userService.put(user);
 
-        User friend = userService.findUserById(friendId);
+
         friend.addFriend(userId);
-        userService.put(friend);
+        userService.put(friend);*/
 
         return friendId;
     }
 
     @DeleteMapping("{userId}/friends/{friendId}")
-    public Integer deleteFriend(@PathVariable("userId") Integer userId,
-                                @PathVariable("friendId") Integer friendId) {
-
-        User user = userService.findUserById(userId);
+    public Integer deleteFriend(@PathVariable("userId") Integer userId, @PathVariable("friendId") Integer friendId) {
+        userService.deleteFriend(userId, friendId);
+        /*User user = userService.findUserById(userId);
         user.deleteFriend(friendId);
         userService.put(user);
 
         User friend = userService.findUserById(friendId);
         friend.deleteFriend(userId);
-        userService.put(friend);
+        userService.put(friend);*/
 
         return friendId;
     }

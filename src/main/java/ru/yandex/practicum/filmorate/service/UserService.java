@@ -10,7 +10,8 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 import ru.yandex.practicum.filmorate.validation.Validator;
 
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -29,6 +30,7 @@ public class UserService {
 
     public User create(@RequestBody User user) {
         user.setId(generationId());
+
         /*if (Validator.validationFailedIsEmptyAndContainsSpaces(user.getLogin())) {
             log.error("Логин пользователя пуст или содержит пробелы.");
             throw new ValidationException("Логин пользователя пуст или содержит пробелы.");
@@ -42,7 +44,7 @@ public class UserService {
             throw new ValidationException("Некорректная дата рождения.");
         }*/
         if (Validator.validationFailedIsEmpty(user.getName())) {
-            user.setId(2);
+            // user.setId(2);
             user.setName(user.getLogin());
             log.debug("Имя пользователя пусто");
             System.out.println("Имя пользователя пусто");
@@ -51,8 +53,9 @@ public class UserService {
 
         return user;
     }
-    public User put(@RequestBody User user) {
 
+    public User put(@RequestBody User user) {
+        System.out.println("service: trying to put a user with id=" + user.getId());
         /*if (Validator.validationFailedIsEmptyAndContainsSpaces(user.getLogin())) {
             log.error("Логин пользователя пуст или содержит пробелы.");
             throw new ValidationException("Логин пользователя пуст или содержит пробелы.");
@@ -69,18 +72,63 @@ public class UserService {
 
         return user;
     }
-    public Map<Integer, User> findAll() {
-   return userStorage.findAll();
-    }
-    public User findUserById(Integer userId) {
-        log.debug("Id user: " + userId);
 
+    public Map<Integer, User> findAll() {
+        return userStorage.findAll();
+    }
+
+    public User findUserById(Integer userId) {
+        // System.out.println("service: trying to fing user by id=" + userId);
         return userStorage.findUserById(userId);
     }
 
+    public void addFriend(Integer userId, Integer friendId) {
+        User user = findUserById(userId);
+        User friend = findUserById(friendId);
 
+        user.addFriend(friendId);
+        put(user);
+
+        friend.addFriend(userId);
+        put(friend);
+
+    }
+
+    public void deleteFriend(Integer userId, Integer friendId) {
+        User user = findUserById(userId);
+        User friend = findUserById(friendId);
+
+        user.deleteFriend(friendId);
+        put(user);
+
+        friend.deleteFriend(userId);
+        put(friend);
+    }
+
+    public List<User> findFriends(int userId) {
+        User user = findUserById(userId);
+        Set<Integer> friends = user.getFriends();
+
+        List<User> listFriends = new ArrayList<>();
+        for (Integer friendId : friends) {
+            listFriends.add(findUserById(friendId));
+        }
+
+        return listFriends;
+    }
+    public List<User> findCommonFriends(int userId, int otherId) {
+        List<User> listCommonFriends = new ArrayList<>();
+        User user = findUserById(userId);
+        User other = findUserById(otherId);
+
+        Set<Integer> commonId = user.getCommonFriends(other);
+        commonId.stream().forEach(id -> listCommonFriends.add(findUserById(id)));
+        return listCommonFriends;
+    }
     //**********
+
     /*
+User user = userService.findUserById(userId);
 
     //*******************************
     /*
