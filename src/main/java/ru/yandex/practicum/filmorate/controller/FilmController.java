@@ -113,22 +113,22 @@ public class FilmController {
     public Integer likeFilm(@PathVariable("filmId") Integer filmId,
                             @PathVariable("userId") Integer userId) {
 
-        Film film = filmService.findFilmById(filmId);
+        /*Film film = filmService.findFilmById(filmId);
         film.addLike(userId);
-        filmService.put(film);
+        filmService.put(film);*/
 
-        return userId;
+        return filmService.likeFilm(filmId, userId);
     }
 
     @DeleteMapping("{filmId}/like/{userId}")
     public Integer deleteLikeFilm(@PathVariable("filmId") Integer filmId,
                                   @PathVariable("userId") Integer userId) {
 
-        Film film = filmService.findFilmById(filmId);
+        /*Film film = filmService.findFilmById(filmId);
       //  User user = user
         film.deleteLike(userId);
-        filmService.put(film);
+        filmService.put(film);*/
 
-        return userId;
+        return filmService.deleteLikeFilm(filmId, userId);
     }
 }
