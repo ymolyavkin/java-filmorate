@@ -33,7 +33,7 @@ public class User {
     }
 
     public boolean addFriend(Integer friendId) {
-        System.out.println(this.id + ": addFriend: " + friendId);
+
         return friends.add(friendId);
     }
 
