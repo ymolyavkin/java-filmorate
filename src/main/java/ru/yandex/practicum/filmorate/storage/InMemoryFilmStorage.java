@@ -13,7 +13,6 @@ import java.util.Map;
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
     private final Map<Integer, Film> films = new HashMap<>();
-    private static final Logger log = LoggerFactory.getLogger(FilmController.class);
 
     @Override
     public Map<Integer, Film> findAll() {
@@ -28,7 +27,6 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public void updateFilm(Film film) {
         if (!films.containsKey(film.getId())) {
-            log.error("Фильм с id " + film.getId() + " не найден.");
             throw new NotFoundException("Фильм с id " + film.getId() + " не найден.");
         }
         films.put(film.getId(), film);
@@ -37,7 +35,6 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public Film findFilmById(Integer filmId) {
         if (!films.containsKey(filmId)) {
-            log.error("Фильм с id " + filmId + " не найден.");
             throw new NotFoundException("Фильм с id " + filmId + " не найден.");
         }
         return films.get(filmId);
@@ -46,7 +43,6 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public void deleteFilm(Film film) {
         if (!films.containsKey(film.getId())) {
-            log.error("Фильм с id " + film.getId() + " не найден.");
             throw new NotFoundException("Фильм с id " + film.getId() + " не найден.");
         }
         films.remove(film.getId());

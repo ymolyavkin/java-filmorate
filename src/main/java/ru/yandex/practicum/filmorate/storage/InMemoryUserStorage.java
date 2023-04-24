@@ -28,7 +28,6 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public void updateUser(User user) {
         if (!users.containsKey(user.getId())) {
-            log.error("Пользователь с id " + user.getId() + " не найден.");
             throw new NotFoundException(String.format(
                     "Пользователь с id %s не найден.",
                     user.getId()
@@ -40,7 +39,6 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public User findUserById(Integer userId) {
         if (!users.containsKey(userId)) {
-            log.error("Пользователь с id " + userId + " не найден.");
             throw new NotFoundException("Пользователь с id " + userId + " не найден.");
         }
         return users.get(userId);
@@ -49,7 +47,6 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public void deleteUser(User user) {
         if (!users.containsKey(user.getId())) {
-            log.error("Пользователь с id " + user.getId() + " не найден.");
             throw new NotFoundException("Пользователь с id " + user.getId() + " не найден.");
         }
         users.remove(user.getId());

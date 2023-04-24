@@ -26,14 +26,13 @@ public class FilmService {
     }
 
     private int generationId() {
-        System.out.println("id=" + id);
         return ++id;
     }
 
     public Film create(@RequestBody Film film) {
         film.setId(generationId());
         filmStorage.addFilm(film);
-        System.out.println("FROM service create film with id = " + film.getId());
+
         return film;
     }
 
@@ -54,19 +53,13 @@ public class FilmService {
     public List<Film> findPopularFilms(Integer count) {
         Map<Integer, Film> allFilms = filmStorage.findAll();
         return allFilms.values().stream()
-                //   .filter(s -> s.numberOfLikes() > 0)
                 .sorted(Collections.reverseOrder())
                 .limit(count)
                 .collect(Collectors.toList());
     }
 
-    public Film findUserById(Integer filmId) {
-        return filmStorage.findFilmById(filmId);
-    }
-
     public Integer likeFilm(Integer filmId, Integer userId) {
         User user = userStorage.findUserById(userId);
-        System.out.println("From film service: like " + user.getLogin());
         Film film = findFilmById(filmId);
 
         film.addLike(userId);
@@ -77,13 +70,16 @@ public class FilmService {
 
     public Integer deleteLikeFilm(Integer filmId, Integer userId) {
         User user = userStorage.findUserById(userId);
-        System.out.println("From film service: delete like " + user.getLogin());
         Film film = findFilmById(filmId);
 
         film.deleteLike(userId);
         put(film);
 
         return userId;
+    }
+
+    public void delete(Film film) {
+        filmStorage.deleteFilm(film);
     }
 }
 
