@@ -2,9 +2,7 @@ package ru.yandex.practicum.filmorate.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import javax.validation.Valid;
@@ -15,11 +13,10 @@ import java.util.stream.Collectors;
 @RequestMapping("/films")
 public class FilmController {
     private final FilmService filmService;
-  //  private final UserService userService;
 
     @Autowired
-    public FilmController(FilmService filmService, UserService userService) {
-       // this.userService=userService;
+    public FilmController(FilmService filmService) {
+
         this.filmService = filmService;
     }
 

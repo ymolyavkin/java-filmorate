@@ -29,6 +29,11 @@ class FilmControllerTest {
         Film film = new Film("nisi eiusmod", "adipisicing", LocalDate.of(1967, 3, 25), 100);
         return film;
     }
+    private Film createTestFilmWithId9999() {
+        Film film = new Film("nisi eiusmod", "adipisicing", LocalDate.of(1967, 3, 25), 100);
+        film.setId(9999);
+        return film;
+    }
 
     @Test
     public void givenFilm_whenAdd_thenStatus200andFilmReturned() throws Exception {
@@ -48,21 +53,18 @@ class FilmControllerTest {
 
     @Test
     public void updateFilmWhenGetNotExistingFilm_thenStatus404anExceptionThrown() throws Exception {
-        String nonExistingFilm = "{\n" +
-                "  \"id\": 9999,\n" +
-                "  \"name\": \"Film Updated\",\n" +
-                "  \"releaseDate\": \"1989-04-17\",\n" +
-                "  \"description\": \"New film update decription\",\n" +
-                "  \"duration\": 190,\n" +
-                "  \"rate\": 4\n" +
-                "}";
+        Film film = createTestFilmWithId9999();
 
         mockMvc.perform(
                         put("/films")
-                                .content(objectMapper.writeValueAsString(nonExistingFilm)))
-                .andExpect(status().is(415))
+                                .content(objectMapper.writeValueAsString(film))
+                                .contentType(MediaType.APPLICATION_JSON))
+
+                .andExpect(status().is(404))
                 .andExpect(mvcResult -> mvcResult.getResolvedException().getClass().equals(Exception.class));
     }
+
+
 
     @Test
     public void givenEmptyWhenGetFilmsThenStatus200() throws Exception {

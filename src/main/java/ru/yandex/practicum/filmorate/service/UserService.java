@@ -5,13 +5,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
-import ru.yandex.practicum.filmorate.validation.Validator;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -43,11 +40,15 @@ public class UserService {
             log.error("Некорректная дата рождения.");
             throw new ValidationException("Некорректная дата рождения.");
         }*/
-        if (Validator.validationFailedIsEmpty(user.getName())) {
+        /*if (Validator.validationFailedIsEmpty(user.getName())) {
             // user.setId(2);
             user.setName(user.getLogin());
             log.debug("Имя пользователя пусто");
             System.out.println("Имя пользователя пусто");
+        }*/
+        if (user.getName().isBlank()) {
+            user.setName(user.getLogin());
+            log.debug("Имя пользователя пусто");
         }
         userStorage.addUser(user);
 
@@ -55,7 +56,7 @@ public class UserService {
     }
 
     public User put(@RequestBody User user) {
-        System.out.println("service: trying to put a user with id=" + user.getId());
+        //System.out.println("service: trying to put a user with id=" + user.getId());
         /*if (Validator.validationFailedIsEmptyAndContainsSpaces(user.getLogin())) {
             log.error("Логин пользователя пуст или содержит пробелы.");
             throw new ValidationException("Логин пользователя пуст или содержит пробелы.");
