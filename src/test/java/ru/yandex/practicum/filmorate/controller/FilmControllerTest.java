@@ -29,6 +29,7 @@ class FilmControllerTest {
         Film film = new Film("nisi eiusmod", "adipisicing", LocalDate.of(1967, 3, 25), 100);
         return film;
     }
+
     private Film createTestFilmWithId9999() {
         Film film = new Film("nisi eiusmod", "adipisicing", LocalDate.of(1967, 3, 25), 100);
         film.setId(9999);
@@ -63,7 +64,6 @@ class FilmControllerTest {
                 .andExpect(status().is(404))
                 .andExpect(mvcResult -> mvcResult.getResolvedException().getClass().equals(Exception.class));
     }
-
 
 
     @Test

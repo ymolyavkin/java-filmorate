@@ -29,6 +29,7 @@ class UserControllerTest {
         User user = new User("Nick Name", "mail@mail.ru", "dolore", LocalDate.of(1946, 8, 20));
         return user;
     }
+
     private User createtestUserWithId9999() {
         User user = new User("Nick Name", "mail@mail.ru", "dolore", LocalDate.of(1946, 8, 20));
         user.setId(9999);
