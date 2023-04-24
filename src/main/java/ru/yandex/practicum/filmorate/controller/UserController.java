@@ -68,8 +68,10 @@ public class UserController {
 
         return friendId;
     }
+
     @DeleteMapping
     public User delete(@Valid @RequestBody User user) {
+
         return userService.delete(user);
     }
 }
