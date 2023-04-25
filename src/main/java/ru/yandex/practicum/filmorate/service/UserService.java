@@ -1,25 +1,23 @@
 package ru.yandex.practicum.filmorate.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
+@Slf4j
+@RequiredArgsConstructor
 @Service
 public class UserService {
     private static int id = 0;
-    private static final Logger log = LoggerFactory.getLogger(UserService.class);
     private final UserStorage userStorage;
-
-    @Autowired
-    public UserService(UserStorage userStorage) {
-        this.userStorage = userStorage;
-    }
 
     private int generationId() {
         return ++id;
@@ -90,8 +88,6 @@ public class UserService {
         User other = findUserById(otherId);
 
         List<Integer> commonId = user.getCommonFriends(other);
-        // В классе User я использую метод, который находит пересечение двух коллекций, но он у меня возвращает список
-        // идентификаторов пользователей List<Integer>, а мне здесь нужен List<User>
         commonId.stream().forEach(id -> listCommonFriends.add(findUserById(id)));
         return listCommonFriends;
     }
