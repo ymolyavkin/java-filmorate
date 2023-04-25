@@ -43,7 +43,7 @@ public class UserService {
         return user;
     }
 
-    public Map<Integer, User> findAll() {
+    public List<User> findAll() {
         return userStorage.findAll();
     }
 
@@ -89,7 +89,9 @@ public class UserService {
         User user = findUserById(userId);
         User other = findUserById(otherId);
 
-        Set<Integer> commonId = user.getCommonFriends(other);
+        List<Integer> commonId = user.getCommonFriends(other);
+        // В классе User я использую метод, который находит пересечение двух коллекций, но он у меня возвращает список
+        // идентификаторов пользователей List<Integer>, а мне здесь нужен List<User>
         commonId.stream().forEach(id -> listCommonFriends.add(findUserById(id)));
         return listCommonFriends;
     }

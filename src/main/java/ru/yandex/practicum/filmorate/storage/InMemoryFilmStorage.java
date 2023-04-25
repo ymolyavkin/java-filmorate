@@ -5,15 +5,17 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
     private final Map<Integer, Film> films = new HashMap<>();
 
     @Override
-    public Map<Integer, Film> findAll() {
-        return films;
+    public List<Film> findAll() {
+        return films.values().stream().collect(Collectors.toList());
     }
 
     @Override

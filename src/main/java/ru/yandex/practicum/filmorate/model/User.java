@@ -6,8 +6,8 @@ import ru.yandex.practicum.filmorate.validation.Birthday;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Data
@@ -41,13 +41,15 @@ public class User {
         return friends.remove(friendId);
     }
 
-    public Set<Integer> getCommonFriends(User otherUser) {
+    public List<Integer> getCommonFriends(User otherUser) {
+        List<Integer> commonFriendsId;
         if (this.getId() == otherUser.getId()) {
-            return this.getFriends();
+            commonFriendsId = this.getFriends().stream().collect(Collectors.toList());
+            return Collections.unmodifiableList(commonFriendsId);
         }
-        Set<Integer> intersection = new HashSet<Integer>(friends);
+        Set<Integer> intersection = new HashSet<>(friends);
         intersection.retainAll(otherUser.getFriends());
-        return intersection;
+        commonFriendsId = intersection.stream().collect(Collectors.toList());
+        return Collections.unmodifiableList(commonFriendsId);
     }
 }
-

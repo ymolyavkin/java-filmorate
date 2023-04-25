@@ -42,7 +42,7 @@ public class FilmService {
         return film;
     }
 
-    public Map<Integer, Film> findAll() {
+    public List<Film> findAll() {
         return filmStorage.findAll();
     }
 
@@ -51,8 +51,8 @@ public class FilmService {
     }
 
     public List<Film> findPopularFilms(Integer count) {
-        Map<Integer, Film> allFilms = filmStorage.findAll();
-        return allFilms.values().stream()
+        List<Film> allFilms = filmStorage.findAll();
+        return allFilms.stream()
                 .sorted(Collections.reverseOrder())
                 .limit(count)
                 .collect(Collectors.toList());
