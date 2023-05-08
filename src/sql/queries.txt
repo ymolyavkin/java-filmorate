@@ -1,0 +1,144 @@
+-- Database: filmorate
+
+-- DROP DATABASE filmorate;
+
+CREATE DATABASE filmorate
+  WITH OWNER = postgres
+       ENCODING = 'UTF8'
+       TABLESPACE = pg_default
+       LC_COLLATE = 'Russian_Russia.1251'
+       LC_CTYPE = 'Russian_Russia.1251'
+       CONNECTION LIMIT = -1;
+--------------------------------------------------
+--DROP TABLE public."user";
+
+CREATE TABLE public."user" (
+	user_id serial PRIMARY KEY NOT NULL,
+	email VARCHAR(30) NOT NULL CHECK (email ~ '^\S+@\S+\.\S+$'),
+	login VARCHAR(30) NOT NULL,
+	name VARCHAR(30),
+	birthday DATE NOT NULL CHECK (birthday < current_date)	
+) WITH (
+  OIDS=FALSE
+);
+--------------------------------------------------
+CREATE TABLE public.genre
+(
+  genre_id serial NOT NULL PRIMARY KEY,
+  name varchar(50)  
+)
+WITH (
+  OIDS=FALSE
+);
+--------------------------------------------------
+CREATE TABLE friendship(
+one_friend_id BIGINT NOT NULL,
+other_friend_id BIGINT NOT NULL,
+status varchar(11) CHECK(status IN ('confirmed','unconfirmed')),
+CONSTRAINT FK_one_friend_id FOREIGN KEY(one_friend_id) REFERENCES public."user"(user_id),
+CONSTRAINT FK_other_friend_id FOREIGN KEY(other_friend_id) REFERENCES public."user"(user_id));
+--------------------------------------------------
+CREATE TABLE film (
+	film_id serial PRIMARY KEY NOT NULL,
+        name VARCHAR(50) NOT NULL, 
+	description VARCHAR(200) NOT NULL,
+	login VARCHAR(30) NOT NULL,
+	release DATE NOT NULL CHECK (release > '28-12-1895'),
+	duration INT CHECK(duration > 0),
+	rating_id INT	
+) WITH (
+  OIDS=FALSE
+);
+-------------------------------------------------
+CREATE TABLE rating (
+	rating_id serial PRIMARY KEY NOT NULL,
+        name VARCHAR(50) NOT NULL		
+) WITH (
+  OIDS=FALSE
+);
+
+
+ALTER TABLE rating
+ALTER COLUMN name TYPE VARCHAR(5),
+ADD CHECK(name IN ('G','PG','PG-13','R','NC-17'));
+--G — у фильма нет возрастных ограничений,
+--PG — детям рекомендуется смотреть фильм с родителями,
+--PG-13 — детям до 13 лет просмотр не желателен,
+--R — лицам до 17 лет просматривать фильм можно только в присутствии взрослого,
+--NC-17 —
+
+-------------------------------------------------
+CREATE TABLE film (
+	film_id serial PRIMARY KEY NOT NULL,
+        name VARCHAR(50) NOT NULL, 
+	description VARCHAR(200) NOT NULL,
+	release DATE NOT NULL CHECK (release > '28-12-1895'),
+	duration INT CHECK(duration > 0),
+	rating_id INT,
+	CONSTRAINT FK_rating_id FOREIGN KEY(rating_id) REFERENCES rating(rating_id)	
+) WITH (
+  OIDS=FALSE
+);
+--------------------------------------------------
+CREATE TABLE film_genre (
+	film_id BIGINT NOT NULL,
+        genre_id BIGINT,
+	CONSTRAINT FK_film_id FOREIGN KEY(film_id) REFERENCES film(film_id),	
+	CONSTRAINT FK_genre_id FOREIGN KEY(genre_id) REFERENCES genre(genre_id)	
+) WITH (
+  OIDS=FALSE
+);
+
+
+--------------------------------------------------
+INSERT INTO rating (name) VALUES
+    ('G'),
+    ('PG'),
+    ('PG-13'),
+    ('R'),
+    ('NC-17');
+--------------------------------------------------
+INSERT INTO film_genre
+VALUES (2, 5),
+       (3, 4),
+       (4, 3),
+       (5, 2),
+       (6, 1);
+--------------------------------------------------
+INSERT INTO genre (name) VALUES
+('Thrillers'),
+('Drama'),
+('Comedy'),
+('Action and adventure'),
+('Science fiction');
+
+---------------------------------------------------
+INSERT INTO public."user" (email, login, name, birthday)
+VALUES
+('ere@mail.ru', 'first', 'Ivan', '1981-02-10');
+--------------------------------------------------
+INSERT INTO friendship (one_friend_id, other_friend_id, status)
+VALUES
+(1,2, 'confirmed'),
+(1,3, 'unconfirmed'),
+(2,3, 'confirmed'),
+(4,5, 'unconfirmed'),
+(2,5, 'confirmed');
+--------------------------------------------------
+Search friends user with id = 1
+SELECT name FROM public."user" 
+WHERE user_id IN
+(SELECT other_friend_id FROM public."user" u JOIN friendship f
+ON f.one_friend_id=u.user_id AND f.one_friend_id=1)
+-------------------------------------------------------
+
+CREATE TABLE user_likefilm (
+	user_id BIGINT NOT NULL,
+        film_id BIGINT NOT NULL,
+        UNIQUE (user_id, film_id), 
+        CONSTRAINT FK_film_id FOREIGN KEY(film_id) REFERENCES film(film_id),	
+	CONSTRAINT FK_user_id FOREIGN KEY(user_id) REFERENCES public."user"(user_id)	
+) WITH (
+  OIDS=FALSE
+);
+------------------------------------------------------
