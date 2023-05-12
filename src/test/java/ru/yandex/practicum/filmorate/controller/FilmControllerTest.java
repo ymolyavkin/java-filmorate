@@ -12,6 +12,8 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Rating;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -27,12 +29,14 @@ class FilmControllerTest {
     private ObjectMapper objectMapper;
 
     private Film createTestFilm() {
-        Film film = new Film("nisi eiusmod", "adipisicing", LocalDate.of(1967, 3, 25), 100, Rating.PG);
+        Film film = new Film("nisi eiusmod","adipisicing",
+                LocalDate.of(1967, 3, 25),100, Rating.PG, Arrays.asList("drama, thriller"));
         return film;
     }
 
     private Film createTestFilmWithId9999() {
-        Film film = new Film("nisi eiusmod", "adipisicing", LocalDate.of(1967, 3, 25), 100, Rating.PG);
+        Film film = new Film("nisi eiusmod", "adipisicing",
+                LocalDate.of(1967, 3, 25),100, Rating.PG, Arrays.asList("comedy"));
         film.setId(9999);
         return film;
     }
@@ -51,7 +55,8 @@ class FilmControllerTest {
                 .andExpect(jsonPath("$.name").value("nisi eiusmod"))
                 .andExpect(jsonPath("$.releaseDate").value("1967-03-25"))
                 .andExpect(jsonPath("$.duration").value("100"))
-                .andExpect(jsonPath("$.rating").value("PG"));
+                .andExpect(jsonPath("$.rating").value("PG"))
+                .andExpect(jsonPath("$.genre").value("drama, thriller"));
     }
 
     @Test

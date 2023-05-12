@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.model;
 
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -24,15 +25,17 @@ public class Film implements Comparable<Film> {
     @Positive(message = "Продолжительность фильма должна быть положительной.")
     private final int duration;
     private final Rating rating;
+    private final List<String> genre;
     private Set<Integer> likes;
 
 
-    public Film(String name, String description, LocalDate releaseDate, int duration, Rating rating) {
+    public Film(String name, String description, LocalDate releaseDate, int duration, Rating rating, List<String> genre) {
         this.name = name;
         this.description = description;
         this.releaseDate = releaseDate;
         this.duration = duration;
         this.rating = rating;
+        this.genre = genre;
         likes = new HashSet<>();
     }
 
