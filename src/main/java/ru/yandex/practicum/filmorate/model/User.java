@@ -22,23 +22,26 @@ public class User {
     private final String login;
     @Birthday
     private final LocalDate birthday;
-    private Set<Integer> friends;
+    private Map<Integer, Boolean> friends;
 
     public User(String name, String email, String login, LocalDate birthday) {
         this.name = name;
         this.email = email;
         this.login = login;
         this.birthday = birthday;
-        friends = new HashSet<>();
+        friends = new HashMap<>();
     }
 
-    public boolean addFriend(Integer friendId) {
-
-        return friends.add(friendId);
+    public void addFriend(Integer friendId) {
+        friends.put(friendId, false);
     }
 
-    public boolean deleteFriend(Integer friendId) {
-        return friends.remove(friendId);
+    public void deleteFriend(Integer friendId) {
+        friends.remove(friendId);
+    }
+
+    public Set<Integer> getFriends() {
+        return friends.keySet();
     }
 
     public List<Integer> getCommonFriends(User otherUser) {
@@ -47,7 +50,7 @@ public class User {
             commonFriendsId = this.getFriends().stream().collect(Collectors.toList());
             return Collections.unmodifiableList(commonFriendsId);
         }
-        Set<Integer> intersection = new HashSet<>(friends);
+        Set<Integer> intersection = new HashSet<>(getFriends());
         intersection.retainAll(otherUser.getFriends());
         commonFriendsId = intersection.stream().collect(Collectors.toList());
         return Collections.unmodifiableList(commonFriendsId);
