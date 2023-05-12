@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Rating;
 
 import java.time.LocalDate;
 
@@ -26,12 +27,12 @@ class FilmControllerTest {
     private ObjectMapper objectMapper;
 
     private Film createTestFilm() {
-        Film film = new Film("nisi eiusmod", "adipisicing", LocalDate.of(1967, 3, 25), 100);
+        Film film = new Film("nisi eiusmod", "adipisicing", LocalDate.of(1967, 3, 25), 100, Rating.PG);
         return film;
     }
 
     private Film createTestFilmWithId9999() {
-        Film film = new Film("nisi eiusmod", "adipisicing", LocalDate.of(1967, 3, 25), 100);
+        Film film = new Film("nisi eiusmod", "adipisicing", LocalDate.of(1967, 3, 25), 100, Rating.PG);
         film.setId(9999);
         return film;
     }
@@ -49,7 +50,8 @@ class FilmControllerTest {
                 .andExpect(jsonPath("$.id").isNumber())
                 .andExpect(jsonPath("$.name").value("nisi eiusmod"))
                 .andExpect(jsonPath("$.releaseDate").value("1967-03-25"))
-                .andExpect(jsonPath("$.duration").value("100"));
+                .andExpect(jsonPath("$.duration").value("100"))
+                .andExpect(jsonPath("$.rating").value("PG"));
     }
 
     @Test

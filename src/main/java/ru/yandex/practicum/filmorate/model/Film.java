@@ -23,14 +23,16 @@ public class Film implements Comparable<Film> {
     private final LocalDate releaseDate;
     @Positive(message = "Продолжительность фильма должна быть положительной.")
     private final int duration;
+    private final Rating rating;
     private Set<Integer> likes;
 
 
-    public Film(String name, String description, LocalDate releaseDate, int duration) {
+    public Film(String name, String description, LocalDate releaseDate, int duration, Rating rating) {
         this.name = name;
         this.description = description;
         this.releaseDate = releaseDate;
         this.duration = duration;
+        this.rating = rating;
         likes = new HashSet<>();
     }
 
