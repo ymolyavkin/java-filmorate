@@ -12,7 +12,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Rating;
 
 import java.time.LocalDate;
-import java.util.Arrays;
+import java.util.*;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -28,14 +28,43 @@ class FilmControllerTest {
     private ObjectMapper objectMapper;
 
     private Film createTestFilm() {
-        Film film = new Film("nisi eiusmod","adipisicing",
-                LocalDate.of(1967, 3, 25),100, Rating.PG, Arrays.asList("drama, thriller"));
+       /* Map<String, Integer> ratingMpa = new HashMap<>();
+        ratingMpa.put("id", 1);
+        Map<String, Integer> genreOne = new HashMap<>();
+        Map<String, Integer> genreTwo = new HashMap<>();
+        genreOne.put("id", 1);
+        genreTwo.put("id", 2);*/
+        Map.Entry<String,Integer> ratingMpa =
+                new AbstractMap.SimpleEntry<String, Integer>("id", 1);
+        Map.Entry<String,Integer> genreOne =
+                new AbstractMap.SimpleEntry<String, Integer>("id", 1);
+        Map.Entry<String,Integer> genreTwo =
+                new AbstractMap.SimpleEntry<String, Integer>("id", 2);
+
+        var genres = Arrays.asList(genreOne, genreTwo);
+        Film film = new Film("nisi eiusmod", "adipisicing",
+                LocalDate.of(1967, 3, 25), 100, ratingMpa, genres);
+
         return film;
     }
 
     private Film createTestFilmWithId9999() {
+        /*Map<String, Integer> ratingMpa = new HashMap<>();
+        ratingMpa.put("id", 1);
+        Map<String, Integer> genreOne = new HashMap<>();
+        Map<String, Integer> genreTwo = new HashMap<>();
+        genreOne.put("id", 1);
+        genreTwo.put("id", 2);*/
+        Map.Entry<String,Integer> ratingMpa =
+                new AbstractMap.SimpleEntry<String, Integer>("id", 1);
+        Map.Entry<String,Integer> genreOne =
+                new AbstractMap.SimpleEntry<String, Integer>("id", 1);
+        Map.Entry<String,Integer> genreTwo =
+                new AbstractMap.SimpleEntry<String, Integer>("id", 2);
+
+        var genres = Arrays.asList(genreOne, genreTwo);
         Film film = new Film("nisi eiusmod", "adipisicing",
-                LocalDate.of(1967, 3, 25),100, Rating.PG, Arrays.asList("comedy"));
+                LocalDate.of(1967, 3, 25), 100, ratingMpa, genres);
         film.setId(9999);
         return film;
     }
@@ -53,9 +82,7 @@ class FilmControllerTest {
                 .andExpect(jsonPath("$.id").isNumber())
                 .andExpect(jsonPath("$.name").value("nisi eiusmod"))
                 .andExpect(jsonPath("$.releaseDate").value("1967-03-25"))
-                .andExpect(jsonPath("$.duration").value("100"))
-                .andExpect(jsonPath("$.rating").value("PG"))
-                .andExpect(jsonPath("$.genre").value("drama, thriller"));
+                .andExpect(jsonPath("$.duration").value("100"));
     }
 
     @Test

@@ -1,10 +1,7 @@
 package ru.yandex.practicum.filmorate.model;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
@@ -24,18 +21,27 @@ public class Film implements Comparable<Film> {
     private final LocalDate releaseDate;
     @Positive(message = "Продолжительность фильма должна быть положительной.")
     private final int duration;
-    private final Rating rating;
-    private final List<String> genre;
+    //private final Map<String, Integer> mpa;
+    //private final List<Map<String, Integer>> genres;
     private Set<Integer> likes;
 
+private final Map.Entry<String,Integer> mpa;
+private final List<Map.Entry<String, Integer>> genres;
+/*
+Map.Entry<String,Integer> entry =
+    new AbstractMap.SimpleEntry<String, Integer>("exmpleString", 42);
+ */
 
-    public Film(String name, String description, LocalDate releaseDate, int duration, Rating rating, List<String> genre) {
+    /*public Film(String name, String description, LocalDate releaseDate, int duration, Map<String,
+            Integer> mpa, List<Map<String, Integer>> genres) {*/
+    public Film(String name, String description, LocalDate releaseDate, int duration,
+                Map.Entry<String, Integer> mpa, List<Map.Entry<String, Integer>> genres) {
         this.name = name;
         this.description = description;
         this.releaseDate = releaseDate;
         this.duration = duration;
-        this.rating = rating;
-        this.genre = genre;
+        this.mpa = mpa;
+        this.genres = genres;
         likes = new HashSet<>();
     }
 

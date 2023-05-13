@@ -22,17 +22,27 @@ public class User {
     private final String login;
     @Birthday
     private final LocalDate birthday;
-    private Map<Integer, Boolean> friends;
+    private Set<Integer> friends;
+    //private Map<Integer, Boolean> friends;
 
     public User(String name, String email, String login, LocalDate birthday) {
         this.name = name;
         this.email = email;
         this.login = login;
         this.birthday = birthday;
-        friends = new HashMap<>();
+        friends = new HashSet<>();
+        //friends = new HashMap<>();
+    }
+    public void addFriend(Integer friendId) {
+        friends.add(friendId);
     }
 
-    public void addFriend(Integer friendId) {
+    public void deleteFriend(Integer friendId) {
+        friends.remove(friendId);
+    }
+
+
+   /* public void addFriend(Integer friendId) {
         friends.put(friendId, false);
     }
 
@@ -43,7 +53,7 @@ public class User {
     public Set<Integer> getFriends() {
         return friends.keySet();
     }
-
+*/
     public List<Integer> getCommonFriends(User otherUser) {
         List<Integer> commonFriendsId;
         if (this.getId() == otherUser.getId()) {

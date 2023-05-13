@@ -25,12 +25,13 @@ class UserControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    private User createtestUser() {
+    private User createTestUser() {
         User user = new User("Nick Name", "mail@mail.ru", "dolore", LocalDate.of(1946, 8, 20));
+        user.setId(1);
         return user;
     }
 
-    private User createtestUserWithId9999() {
+    private User createTestUserWithId9999() {
         User user = new User("Nick Name", "mail@mail.ru", "dolore", LocalDate.of(1946, 8, 20));
         user.setId(9999);
         return user;
@@ -38,7 +39,8 @@ class UserControllerTest {
 
     @Test
     public void updateUser_whenAdd_thenStatus200andUserReturned() throws Exception {
-        User user = createtestUser();
+       User user = createTestUser();
+
 
         mockMvc.perform(
                         post("/users")
@@ -53,8 +55,10 @@ class UserControllerTest {
     }
 
     @Test
-    public void givenId_whenGetNotExistingUser_thenStatus404anExceptionThrown() throws Exception {
-        User user = createtestUserWithId9999();
+    public void updateNotExistingUser_thenStatus404anExceptionThrown() throws Exception {
+       User user = createTestUserWithId9999();
+
+        user.setId(9999);
 
         mockMvc.perform(
                         put("/users")
