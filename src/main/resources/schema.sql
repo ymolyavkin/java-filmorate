@@ -1,10 +1,11 @@
-CREATE TABLE IF NOT EXISTS `PUBLIC."user"`(
-                                            id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                                            email VARCHAR(30) NOT NULL,
-                                            login VARCHAR(30) NOT NULL,
-                                            name VARCHAR(30),
-                                            birthday DATE NOT NULL
+CREATE TABLE IF NOT EXISTS `user`(
+                                              id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                                              email VARCHAR(30) NOT NULL,
+                                              login VARCHAR(30) NOT NULL,
+                                              name VARCHAR(30),
+                                              birthday DATE NOT NULL
 );
+
 CREATE TABLE IF NOT EXISTS `genre` (
                                             id BIGINT AUTO_INCREMENT PRIMARY KEY,
                                             name VARCHAR(50) NOT NULL
@@ -13,8 +14,8 @@ CREATE TABLE IF NOT EXISTS `friendship` (
                                           one_friend_id BIGINT NOT NULL,
                                           other_friend_id BIGINT NOT NULL,
                                           CONSTRAINT U_each_other UNIQUE (one_friend_id, other_friend_id),
-                                          CONSTRAINT FK_one_friend_id FOREIGN KEY(one_friend_id) REFERENCES `PUBLIC."user"`(id),
-                                          CONSTRAINT FK_other_friend_id FOREIGN KEY(other_friend_id) REFERENCES `PUBLIC."user"`(id));
+                                          CONSTRAINT FK_one_friend_id FOREIGN KEY(one_friend_id) REFERENCES `user`(id),
+                                          CONSTRAINT FK_other_friend_id FOREIGN KEY(other_friend_id) REFERENCES `user`(id));
 --------------------------------------------------
 CREATE TABLE IF NOT EXISTS `film`
 (
@@ -46,5 +47,5 @@ CREATE TABLE IF NOT EXISTS `user_likefilm` (
                                              film_id BIGINT NOT NULL,
                                              CONSTRAINT U_user_id_film_id UNIQUE (user_id, film_id),
                                              CONSTRAINT FK_like_film_id FOREIGN KEY(film_id) REFERENCES `film`(id),
-                                             CONSTRAINT FK_like_user_id FOREIGN KEY(user_id) REFERENCES `PUBLIC."user"`(id)
+                                             CONSTRAINT FK_like_user_id FOREIGN KEY(user_id) REFERENCES `user`(id)
 );
