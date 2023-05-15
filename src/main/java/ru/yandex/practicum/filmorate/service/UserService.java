@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Slf4j
@@ -46,9 +47,14 @@ public class UserService {
     }
 
     public User findUserById(Integer userId) {
+        Optional<User> optUser = userStorage.findUserById(userId.toString());
         return userStorage.findUserById(userId);
     }
+    public Optional<User> findUserById(String userId) {
+        //return userStorage.findUserById(userId);
 
+        return userStorage.findUserById(userId);
+    }
     public void addFriend(Integer userId, Integer friendId) {
         User user = findUserById(userId);
         User friend = findUserById(friendId);

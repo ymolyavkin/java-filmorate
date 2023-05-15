@@ -8,6 +8,8 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class UserDbStorage implements UserStorage {
     private final JdbcTemplate jdbcTemplate;
@@ -52,13 +54,24 @@ public class UserDbStorage implements UserStorage {
             //   user.setId(id);
             //----------------------------------------------
             User user = new User("Nick Name", "mail@mail.ru", "dolore", LocalDate.of(1946, 8, 20));
-            user.setId(1);
+            int userId = stringToInt(id);
+            user.setId(userId);
             //----------------------------------------------
             return Optional.of(user);
         } else {
             //  log.info("Пользователь с идентификатором {} не найден.", id);
             return Optional.empty();
         }
+    }
+    static int stringToInt(String userInput) {
+        // Шаблон выбирает первое число из строки
+        Pattern pattern = Pattern.compile(".*?(\\d+).*");
+        Matcher matcher = pattern.matcher(userInput);
+        String number = "-1";
+        if (matcher.find()) {
+            number = matcher.group(1);
+        }
+        return Integer.valueOf(number);
     }
 }
 /*
