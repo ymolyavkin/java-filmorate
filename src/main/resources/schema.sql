@@ -17,6 +17,11 @@ CREATE TABLE IF NOT EXISTS `friendship` (
                                           CONSTRAINT FK_one_friend_id FOREIGN KEY(one_friend_id) REFERENCES `user`(id),
                                           CONSTRAINT FK_other_friend_id FOREIGN KEY(other_friend_id) REFERENCES `user`(id));
 --------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mpa` (
+                                     id INTEGER AUTO_INCREMENT PRIMARY KEY,
+                                     name VARCHAR(50) NOT NULL
+);
+--------------------------------------------------
 CREATE TABLE IF NOT EXISTS `film`
 (
     id          BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -29,11 +34,7 @@ CREATE TABLE IF NOT EXISTS `film`
     CONSTRAINT FK_mpa_id FOREIGN KEY (mpa_id) REFERENCES `mpa` (id)
 );
 -------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mpa` (
-                                   id INTEGER AUTO_INCREMENT PRIMARY KEY,
-                                   name VARCHAR(50) NOT NULL
-);
---------------------------------------------------
+
 CREATE TABLE IF NOT EXISTS `film_genre` (
                                           film_id BIGINT NOT NULL,
                                           genre_id INTEGER,
