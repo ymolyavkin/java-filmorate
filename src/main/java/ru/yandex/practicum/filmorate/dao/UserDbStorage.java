@@ -1,16 +1,20 @@
 package ru.yandex.practicum.filmorate.dao;
 
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
+import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
+import java.sql.PreparedStatement;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+@Component("userDbStorage")
 public class UserDbStorage implements UserStorage {
     private final JdbcTemplate jdbcTemplate;
 
@@ -20,6 +24,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public List<User> findAll() {
+        System.out.println();
         return null;
     }
 
@@ -62,6 +67,19 @@ public class UserDbStorage implements UserStorage {
             //  log.info("Пользователь с идентификатором {} не найден.", id);
             return Optional.empty();
         }
+    }
+
+    public void insertIntoGenre() {
+        String sqlQuery = "insert into genre(name) values (?)";
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(connection -> {
+            PreparedStatement stmt = connection.prepareStatement(sqlQuery, new String[]{"id"});
+            stmt.setString(1, "first");
+
+            return stmt;
+        }, keyHolder);
+
+
     }
     static int stringToInt(String userInput) {
         // Шаблон выбирает первое число из строки

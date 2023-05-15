@@ -17,9 +17,9 @@ import java.util.stream.Collectors;
 @Service
 public class FilmService {
     private static int id = 0;
-    @Qualifier("FilmDbStorage")
+    @Qualifier("filmDbStorage")
     private final FilmStorage filmStorage;
-    @Qualifier("UserDbStorage")
+    @Qualifier("userDbStorage")
     private final UserStorage userStorage;
   //  private final UserStorage userDaoStorage;
    // private final FilmStorage filmDaoStorage;

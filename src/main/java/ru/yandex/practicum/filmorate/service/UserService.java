@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 import ru.yandex.practicum.filmorate.model.User;
@@ -18,6 +19,7 @@ import java.util.Set;
 @Service
 public class UserService {
     private static int id = 0;
+    @Qualifier("userDbStorage")
     private final UserStorage userStorage;
 
     private int generationId() {
