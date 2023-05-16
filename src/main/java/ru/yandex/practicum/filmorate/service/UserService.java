@@ -27,7 +27,7 @@ public class UserService {
     }
 
     public User create(@RequestBody User user) {
-        user.setId(generationId());
+        //user.setId(generationId());
 
         if (user.getName().isBlank()) {
             user.setName(user.getLogin());

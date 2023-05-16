@@ -11,6 +11,7 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.sql.PreparedStatement;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -20,6 +21,7 @@ import java.util.regex.Pattern;
 @Component("userDbStorage")
 public class UserDbStorage implements UserStorage {
     private final JdbcTemplate jdbcTemplate;
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-mm-dd");
 
     public UserDbStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -35,7 +37,9 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public void addUser(User user) {
+        String sqlQuery = "insert into `user`(email, login, name, birthday) values (?, ?, ?, ?)";
 
+        jdbcTemplate.update(sqlQuery, user.getEmail(), user.getLogin(), user.getName(), user.getBirthday());
     }
 
     @Override
@@ -45,7 +49,26 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User findUserById(Integer userId) {
-        return null;
+        String id = userId.toString();
+        // выполняем запрос к базе данных.
+        SqlRowSet userRows = jdbcTemplate.queryForRowSet("select * from user where id = ?", id);
+        if (userRows.next()) {
+            String email = userRows.getString("email");
+            String login = userRows.getString("login");
+            String name = userRows.getString("name");
+            LocalDate birthday = LocalDate.parse(userRows.getString("birthday"), formatter);
+            log.info("Найден пользователь: {} {}", userRows.getString("id"), login);
+
+            // вы заполните данные пользователя в следующем уроке
+            User user = new User(name, email, login, birthday);
+            user.setId(userId);
+            //----------------------------------------------
+
+            return user;
+        } else {
+            log.info("Пользователь с идентификатором {} не найден.", id);
+            return null;
+        }
     }
 
     @Override
@@ -86,7 +109,8 @@ public class UserDbStorage implements UserStorage {
 
 
     }
-    private void selectAllGenres(){
+
+    private void selectAllGenres() {
         // выполняем запрос к базе данных.
         SqlRowSet genreRows = jdbcTemplate.queryForRowSet("select * from genre");
         if (genreRows.next()) {
@@ -94,10 +118,11 @@ public class UserDbStorage implements UserStorage {
 
 
         } else {
-             log.info("Жанр не найден");
+            log.info("Жанр не найден");
 
         }
     }
+
     static int stringToInt(String userInput) {
         // Шаблон выбирает первое число из строки
         Pattern pattern = Pattern.compile(".*?(\\d+).*");
