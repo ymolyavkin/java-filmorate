@@ -13,7 +13,8 @@ public interface UserStorage {
     public void updateUser(User user);
 
     public User findUserById(Integer userId);
+
     Optional<User> findUserById(String id);
 
-    public void deleteUser(User user);
+    public void deleteUserById(Integer userId);
 }

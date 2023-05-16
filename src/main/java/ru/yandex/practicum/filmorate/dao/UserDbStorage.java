@@ -43,6 +43,7 @@ public class UserDbStorage implements UserStorage {
         String name = resultSet.getString("name");
         LocalDate birthday = LocalDate.parse(resultSet.getString("birthday"), formatter);
         User user = new User(name, email, login, birthday);
+
         user.setId(id);
         return user;
     }
@@ -92,8 +93,8 @@ public class UserDbStorage implements UserStorage {
                 .build();
     }*/
     @Override
-    public void deleteUser(User user) {
-        String id = Long.toString(user.getId());
+    public void deleteUserById(Integer userId) {
+        String id = Integer.toString(userId);
         String sqlQuery = "delete from `user` where id = ?";
 
         if (jdbcTemplate.update(sqlQuery, id) > 0) {

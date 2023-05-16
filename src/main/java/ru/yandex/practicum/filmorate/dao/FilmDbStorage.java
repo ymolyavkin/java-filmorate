@@ -28,7 +28,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public void deleteFilm(Film film) {
+    public void deleteFilmById(Integer filmId) {
 
     }
 }

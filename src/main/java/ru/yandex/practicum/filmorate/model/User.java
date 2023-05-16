@@ -34,16 +34,6 @@ public class User {
         //friends = new HashMap<>();
     }
 
-    public User(int id, String name, String email, String login, LocalDate birthday) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-        this.login = login;
-        this.birthday = birthday;
-        friends = new HashSet<>();
-        //friends = new HashMap<>();
-    }
-
     public void addFriend(Integer friendId) {
         friends.add(friendId);
     }

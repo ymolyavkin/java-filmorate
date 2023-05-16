@@ -100,9 +100,7 @@ public class UserService {
         return listCommonFriends;
     }
 
-    public User delete(User user) {
-        userStorage.deleteUser(user);
-
-        return user;
+    public void delete(Integer userId) {
+        userStorage.deleteUserById(userId);
     }
 }

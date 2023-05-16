@@ -59,9 +59,10 @@ public class UserController {
         return friendId;
     }
 
-    @DeleteMapping
-    public User delete(@Valid @RequestBody User user) {
+    @DeleteMapping("{userId}")
+    public Integer delete(@PathVariable("userId") Integer userId) {
+        userService.delete(userId);
 
-        return userService.delete(user);
+        return userId;
     }
 }

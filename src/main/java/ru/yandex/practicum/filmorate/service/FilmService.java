@@ -77,8 +77,10 @@ public class FilmService {
         return userId;
     }
 
-    public void delete(Film film) {
-        filmStorage.deleteFilm(film);
+    public Integer delete(Integer filmId) {
+        filmStorage.deleteFilmById(filmId);
+
+        return filmId;
     }
 }
 
