@@ -6,6 +6,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
@@ -34,6 +35,7 @@ public class UserDbStorage implements UserStorage {
         String sqlQuery = "select id, name, email, login,  birthday from `user`";
         return jdbcTemplate.query(sqlQuery, this::mapRowToUser);
     }
+
     private User mapRowToUser(ResultSet resultSet, int rowNum) throws SQLException {
         int id = stringToInt(resultSet.getString("id"));
         String email = resultSet.getString("email");
@@ -44,6 +46,7 @@ public class UserDbStorage implements UserStorage {
         user.setId(id);
         return user;
     }
+
     @Override
     public void addUser(User user) {
         String sqlQuery = "insert into `user`(email, login, name, birthday) values (?, ?, ?, ?)";
@@ -76,7 +79,7 @@ public class UserDbStorage implements UserStorage {
             return user;
         } else {
             log.info("Пользователь с идентификатором {} не найден.", id);
-            return null;
+            throw new NotFoundException("Пользователь с id " + userId + " не найден.");
         }
     }
 
@@ -90,13 +93,20 @@ public class UserDbStorage implements UserStorage {
     }*/
     @Override
     public void deleteUser(User user) {
+        String id = Long.toString(user.getId());
+        String sqlQuery = "delete from `user` where id = ?";
 
+        if (jdbcTemplate.update(sqlQuery, id) > 0) {
+            log.info("Удалён пользователь: {}", id);
+        } else {
+            throw new NotFoundException("Пользователь с id " + id + " не найден.");
+        }
     }
 
     @Override
     public Optional<User> findUserById(String id) {
         // выполняем запрос к базе данных.
-        SqlRowSet userRows = jdbcTemplate.queryForRowSet("select * from user where id = ?", id);
+        SqlRowSet userRows = jdbcTemplate.queryForRowSet("select * from `user` where id = ?", id);
         if (userRows.next()) {
             // log.info("Найден пользователь: {} {}", userRows.getString("id"), userRows.getString("nickname"));
             // вы заполните данные пользователя в следующем уроке
@@ -109,8 +119,8 @@ public class UserDbStorage implements UserStorage {
             //----------------------------------------------
             return Optional.of(user);
         } else {
-            //  log.info("Пользователь с идентификатором {} не найден.", id);
-            return Optional.empty();
+            log.info("Пользователь с идентификатором {} не найден.", id);
+            throw new NotFoundException("Пользователь с id " + id + " не найден.");
         }
     }
 

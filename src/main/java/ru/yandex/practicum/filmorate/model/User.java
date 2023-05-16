@@ -33,6 +33,17 @@ public class User {
         friends = new HashSet<>();
         //friends = new HashMap<>();
     }
+
+    public User(int id, String name, String email, String login, LocalDate birthday) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.login = login;
+        this.birthday = birthday;
+        friends = new HashSet<>();
+        //friends = new HashMap<>();
+    }
+
     public void addFriend(Integer friendId) {
         friends.add(friendId);
     }
@@ -42,18 +53,18 @@ public class User {
     }
 
 
-   /* public void addFriend(Integer friendId) {
-        friends.put(friendId, false);
-    }
+    /* public void addFriend(Integer friendId) {
+         friends.put(friendId, false);
+     }
 
-    public void deleteFriend(Integer friendId) {
-        friends.remove(friendId);
-    }
+     public void deleteFriend(Integer friendId) {
+         friends.remove(friendId);
+     }
 
-    public Set<Integer> getFriends() {
-        return friends.keySet();
-    }
-*/
+     public Set<Integer> getFriends() {
+         return friends.keySet();
+     }
+ */
     public List<Integer> getCommonFriends(User otherUser) {
         List<Integer> commonFriendsId;
         if (this.getId() == otherUser.getId()) {
