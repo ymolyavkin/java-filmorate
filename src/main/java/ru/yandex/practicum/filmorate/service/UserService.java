@@ -11,24 +11,16 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 @Slf4j
 @RequiredArgsConstructor
 @Service
 public class UserService {
-    private static int id = 0;
     @Qualifier("userDbStorage")
     private final UserStorage userStorage;
 
-    private int generationId() {
-        return ++id;
-    }
-
     public User create(@RequestBody User user) {
-        //user.setId(generationId());
-
         if (user.getName().isBlank()) {
             user.setName(user.getLogin());
             log.info("Имя пользователя пусто");
@@ -49,15 +41,9 @@ public class UserService {
     }
 
     public User findUserById(int userId) {
-        //  Optional<User> optUser = userStorage.findUserById(userId.toString());
         return userStorage.findUserById(userId);
     }
 
-    /*public Optional<User> findUserById(String userId) {
-        //return userStorage.findUserById(userId);
-
-        return userStorage.findUserById(userId);
-    }*/
     public void addFriend(int userId, int friendId) {
         User user = findUserById(userId);
         User friend = findUserById(friendId);

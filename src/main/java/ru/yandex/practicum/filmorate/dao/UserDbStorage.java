@@ -49,11 +49,11 @@ public class UserDbStorage implements UserStorage {
     }
 
     //@Override
-    public void addUserOld(User user) {
+   /* public void addUserOld(User user) {
         String sqlQuery = "insert into `user`(email, login, name, birthday) values (?, ?, ?, ?)";
 
         jdbcTemplate.update(sqlQuery, user.getEmail(), user.getLogin(), user.getName(), user.getBirthday());
-    }
+    }*/
 
     @Override
     public int addUser(User user) {
@@ -73,13 +73,26 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public void updateUser(User user) {
+        String userId = Integer.toString(user.getId());
+        SqlRowSet userRows = jdbcTemplate.queryForRowSet("select * from `user` where id = ?", userId);
+        if (userRows.next()) {
+            String sqlQuery = "update `user` set email = ?, login = ?, name = ?, birthday = ? where id = ?";
 
+            jdbcTemplate.update(sqlQuery,
+                    user.getEmail(),
+                    user.getLogin(),
+                    user.getName(),
+                    user.getBirthday(),
+                    user.getId());
+        } else {
+            throw new NotFoundException("Пользователь с id " + userId + " не найден.");
+        }
     }
 
     @Override
     public User findUserById(Integer userId) {
         String id = userId.toString();
-        // выполняем запрос к базе данных.
+
         SqlRowSet userRows = jdbcTemplate.queryForRowSet("select * from `user` where id = ?", id);
         if (userRows.next()) {
             String email = userRows.getString("email");
@@ -88,26 +101,15 @@ public class UserDbStorage implements UserStorage {
             LocalDate birthday = LocalDate.parse(userRows.getString("birthday"), formatter);
             log.info("Найден пользователь: {} {}", userRows.getString("id"), login);
 
-            // вы заполните данные пользователя в следующем уроке
             User user = new User(name, email, login, birthday);
             user.setId(userId);
-            //----------------------------------------------
 
             return user;
         } else {
-            log.info("Пользователь с идентификатором {} не найден.", id);
             throw new NotFoundException("Пользователь с id " + userId + " не найден.");
         }
     }
 
-    /*private User mapRowToEmployee(ResultSet resultSet, int rowNum) throws SQLException {
-        return User.builder()
-                .id(resultSet.getLong("id"))
-                .firstName(resultSet.getString("first_name"))
-                .lastName(resultSet.getString("last_name"))
-                .yearlyIncome(resultSet.getLong("yearly_income"))
-                .build();
-    }*/
     @Override
     public int deleteUserById(Integer userId) {
         String id = Integer.toString(userId);
@@ -179,29 +181,3 @@ public class UserDbStorage implements UserStorage {
         return Integer.valueOf(number);
     }
 }
-/*
-@Component
-public class UserDaoImpl implements UserDao {
-    private final Logger log = LoggerFactory.getLogger(UserDaoImpl.class);
-
-    private final JdbcTemplate jdbcTemplate;
-
-    public UserDaoImpl(JdbcTemplate jdbcTemplate){
-        this.jdbcTemplate=jdbcTemplate;
-    }
-
-    @Override
-    public Optional<User> findUserById(String id) {
-        // выполняем запрос к базе данных.
-        SqlRowSet userRows = jdbcTemplate.queryForRowSet("select * from cat_user where id = ?", id);
-        if(userRows.next()) {
-            log.info("Найден пользователь: {} {}", userRows.getString("id"), userRows.getString("nickname"));
-            // вы заполните данные пользователя в следующем уроке
-            User user = new User();
-            user.setId(id);
-            return Optional.of(user);
-        } else {
-            log.info("Пользователь с идентификатором {} не найден.", id);
-            return Optional.empty();
-        }
- */
