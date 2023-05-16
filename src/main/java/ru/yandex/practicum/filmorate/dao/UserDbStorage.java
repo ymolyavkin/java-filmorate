@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.dao;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -14,6 +15,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+@Slf4j
 @Component("userDbStorage")
 public class UserDbStorage implements UserStorage {
     private final JdbcTemplate jdbcTemplate;
@@ -24,7 +27,9 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public List<User> findAll() {
-        System.out.println();
+        System.out.println("FindAllGenres");
+        //findUserById("1");
+        selectAllGenres();
         return null;
     }
 
@@ -80,6 +85,18 @@ public class UserDbStorage implements UserStorage {
         }, keyHolder);
 
 
+    }
+    private void selectAllGenres(){
+        // выполняем запрос к базе данных.
+        SqlRowSet genreRows = jdbcTemplate.queryForRowSet("select * from genre");
+        if (genreRows.next()) {
+            log.info("Найден жанр: {} {}", genreRows.getString("id"), genreRows.getString("name"));
+
+
+        } else {
+             log.info("Жанр не найден");
+
+        }
     }
     static int stringToInt(String userInput) {
         // Шаблон выбирает первое число из строки
