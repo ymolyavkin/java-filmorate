@@ -10,6 +10,8 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -21,7 +23,7 @@ import java.util.regex.Pattern;
 @Component("userDbStorage")
 public class UserDbStorage implements UserStorage {
     private final JdbcTemplate jdbcTemplate;
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-mm-dd");
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     public UserDbStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -29,12 +31,19 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public List<User> findAll() {
-        System.out.println("FindAllGenres");
-        //findUserById("1");
-        selectAllGenres();
-        return null;
+        String sqlQuery = "select id, name, email, login,  birthday from `user`";
+        return jdbcTemplate.query(sqlQuery, this::mapRowToUser);
     }
-
+    private User mapRowToUser(ResultSet resultSet, int rowNum) throws SQLException {
+        int id = stringToInt(resultSet.getString("id"));
+        String email = resultSet.getString("email");
+        String login = resultSet.getString("login");
+        String name = resultSet.getString("name");
+        LocalDate birthday = LocalDate.parse(resultSet.getString("birthday"), formatter);
+        User user = new User(name, email, login, birthday);
+        user.setId(id);
+        return user;
+    }
     @Override
     public void addUser(User user) {
         String sqlQuery = "insert into `user`(email, login, name, birthday) values (?, ?, ?, ?)";
@@ -51,7 +60,7 @@ public class UserDbStorage implements UserStorage {
     public User findUserById(Integer userId) {
         String id = userId.toString();
         // выполняем запрос к базе данных.
-        SqlRowSet userRows = jdbcTemplate.queryForRowSet("select * from user where id = ?", id);
+        SqlRowSet userRows = jdbcTemplate.queryForRowSet("select * from `user` where id = ?", id);
         if (userRows.next()) {
             String email = userRows.getString("email");
             String login = userRows.getString("login");
@@ -71,6 +80,14 @@ public class UserDbStorage implements UserStorage {
         }
     }
 
+    /*private User mapRowToEmployee(ResultSet resultSet, int rowNum) throws SQLException {
+        return User.builder()
+                .id(resultSet.getLong("id"))
+                .firstName(resultSet.getString("first_name"))
+                .lastName(resultSet.getString("last_name"))
+                .yearlyIncome(resultSet.getLong("yearly_income"))
+                .build();
+    }*/
     @Override
     public void deleteUser(User user) {
 
