@@ -21,8 +21,8 @@ public class FilmService {
     private final FilmStorage filmStorage;
     @Qualifier("userDbStorage")
     private final UserStorage userStorage;
-  //  private final UserStorage userDaoStorage;
-   // private final FilmStorage filmDaoStorage;
+    //  private final UserStorage userDaoStorage;
+    // private final FilmStorage filmDaoStorage;
 
     private int generationId() {
         return ++id;
@@ -45,11 +45,11 @@ public class FilmService {
         return filmStorage.findAll();
     }
 
-    public Film findFilmById(Integer filmId) {
+    public Film findFilmById(int filmId) {
         return filmStorage.findFilmById(filmId);
     }
 
-    public List<Film> findPopularFilms(Integer count) {
+    public List<Film> findPopularFilms(int count) {
         List<Film> allFilms = filmStorage.findAll();
         return allFilms.stream()
                 .sorted(Collections.reverseOrder())
@@ -57,7 +57,7 @@ public class FilmService {
                 .collect(Collectors.toList());
     }
 
-    public Integer likeFilm(Integer filmId, Integer userId) {
+    public int likeFilm(int filmId, int userId) {
         User user = userStorage.findUserById(userId);
         Film film = findFilmById(filmId);
 
@@ -67,7 +67,7 @@ public class FilmService {
         return userId;
     }
 
-    public Integer deleteLikeFilm(Integer filmId, Integer userId) {
+    public int deleteLikeFilm(int filmId, int userId) {
         User user = userStorage.findUserById(userId);
         Film film = findFilmById(filmId);
 
@@ -77,10 +77,8 @@ public class FilmService {
         return userId;
     }
 
-    public Integer delete(Integer filmId) {
-        filmStorage.deleteFilmById(filmId);
-
-        return filmId;
+    public int delete(int filmId) {
+        return filmStorage.deleteFilmById(filmId);
     }
 }
 

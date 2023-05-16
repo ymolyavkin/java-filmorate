@@ -33,8 +33,8 @@ public class UserService {
             user.setName(user.getLogin());
             log.info("Имя пользователя пусто");
         }
-        userStorage.addUser(user);
-
+        int idUser = userStorage.addUser(user);
+        user.setId(idUser);
         return user;
     }
 
@@ -48,16 +48,17 @@ public class UserService {
         return userStorage.findAll();
     }
 
-    public User findUserById(Integer userId) {
-        Optional<User> optUser = userStorage.findUserById(userId.toString());
+    public User findUserById(int userId) {
+        //  Optional<User> optUser = userStorage.findUserById(userId.toString());
         return userStorage.findUserById(userId);
     }
-    public Optional<User> findUserById(String userId) {
+
+    /*public Optional<User> findUserById(String userId) {
         //return userStorage.findUserById(userId);
 
         return userStorage.findUserById(userId);
-    }
-    public void addFriend(Integer userId, Integer friendId) {
+    }*/
+    public void addFriend(int userId, int friendId) {
         User user = findUserById(userId);
         User friend = findUserById(friendId);
 
@@ -68,7 +69,7 @@ public class UserService {
         put(friend);
     }
 
-    public void deleteFriend(Integer userId, Integer friendId) {
+    public void deleteFriend(int userId, int friendId) {
         User user = findUserById(userId);
         User friend = findUserById(friendId);
 
@@ -84,7 +85,7 @@ public class UserService {
         Set<Integer> friends = user.getFriends();
 
         List<User> listFriends = new ArrayList<>();
-        for (Integer friendId : friends) {
+        for (int friendId : friends) {
             listFriends.add(findUserById(friendId));
         }
         return listFriends;
@@ -100,7 +101,7 @@ public class UserService {
         return listCommonFriends;
     }
 
-    public void delete(Integer userId) {
-        userStorage.deleteUserById(userId);
+    public int delete(int userId) {
+        return userStorage.deleteUserById(userId);
     }
 }

@@ -23,12 +23,13 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public Film findFilmById(Integer filmId) {
+    public Film findFilmById(int filmId) {
         return null;
     }
 
     @Override
-    public void deleteFilmById(Integer filmId) {
+    public int deleteFilmById(int filmId) {
 
+        return 0;
     }
 }

@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.dao;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
@@ -16,7 +17,6 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -48,11 +48,27 @@ public class UserDbStorage implements UserStorage {
         return user;
     }
 
-    @Override
-    public void addUser(User user) {
+    //@Override
+    public void addUserOld(User user) {
         String sqlQuery = "insert into `user`(email, login, name, birthday) values (?, ?, ?, ?)";
 
         jdbcTemplate.update(sqlQuery, user.getEmail(), user.getLogin(), user.getName(), user.getBirthday());
+    }
+
+    @Override
+    public int addUser(User user) {
+        String sqlQuery = "insert into `user`(email, login, name, birthday) values (?, ?, ?, ?)";
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(connection -> {
+            PreparedStatement stmt = connection.prepareStatement(sqlQuery, new String[]{"id"});
+            stmt.setString(1, user.getEmail());
+            stmt.setString(2, user.getLogin());
+            stmt.setString(3, user.getName());
+            stmt.setString(4, user.getBirthday().format(formatter));
+            return stmt;
+        }, keyHolder);
+
+        return keyHolder.getKey().intValue();
     }
 
     @Override
@@ -93,7 +109,7 @@ public class UserDbStorage implements UserStorage {
                 .build();
     }*/
     @Override
-    public void deleteUserById(Integer userId) {
+    public int deleteUserById(Integer userId) {
         String id = Integer.toString(userId);
         String sqlQuery = "delete from `user` where id = ?";
 
@@ -102,9 +118,10 @@ public class UserDbStorage implements UserStorage {
         } else {
             throw new NotFoundException("Пользователь с id " + id + " не найден.");
         }
+        return 0;
     }
 
-    @Override
+    /*@Override
     public Optional<User> findUserById(String id) {
         // выполняем запрос к базе данных.
         SqlRowSet userRows = jdbcTemplate.queryForRowSet("select * from `user` where id = ?", id);
@@ -124,7 +141,7 @@ public class UserDbStorage implements UserStorage {
             throw new NotFoundException("Пользователь с id " + id + " не найден.");
         }
     }
-
+*/
     public void insertIntoGenre() {
         String sqlQuery = "insert into genre(name) values (?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();

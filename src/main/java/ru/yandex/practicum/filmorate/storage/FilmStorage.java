@@ -11,7 +11,7 @@ public interface FilmStorage {
 
     public void updateFilm(Film film);
 
-    public Film findFilmById(Integer filmId);
+    public Film findFilmById(int filmId);
 
-    public void deleteFilmById(Integer filmId);
+    public int deleteFilmById(int filmId);
 }

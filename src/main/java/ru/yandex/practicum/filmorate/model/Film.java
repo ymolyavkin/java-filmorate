@@ -58,11 +58,11 @@ Map.Entry<String,Integer> entry =
         return Objects.hash(id, name);
     }
 
-    public boolean addLike(Integer userId) {
+    public boolean addLike(int userId) {
         return likes.add(userId);
     }
 
-    public boolean deleteLike(Integer userId) {
+    public boolean deleteLike(int userId) {
         return likes.remove(userId);
     }
 

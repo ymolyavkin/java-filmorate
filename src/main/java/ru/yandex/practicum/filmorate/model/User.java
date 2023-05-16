@@ -34,11 +34,11 @@ public class User {
         //friends = new HashMap<>();
     }
 
-    public void addFriend(Integer friendId) {
+    public void addFriend(int friendId) {
         friends.add(friendId);
     }
 
-    public void deleteFriend(Integer friendId) {
+    public void deleteFriend(int friendId) {
         friends.remove(friendId);
     }
 
