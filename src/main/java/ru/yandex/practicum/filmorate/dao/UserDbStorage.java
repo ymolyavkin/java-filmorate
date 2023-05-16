@@ -122,6 +122,14 @@ public class UserDbStorage implements UserStorage {
         }
         return 0;
     }
+    public boolean exists(int id) {
+        String sqlQuery = "select count(*) from `user` where id = ?";
+
+        //noinspection ConstantConditions: return value is always an int, so NPE is impossible here
+        int result = jdbcTemplate.queryForObject(sqlQuery, Integer.class, id);
+
+        return result == 1;
+    }
 
     /*@Override
     public Optional<User> findUserById(String id) {

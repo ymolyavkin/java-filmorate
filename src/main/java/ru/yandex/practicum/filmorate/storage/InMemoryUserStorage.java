@@ -21,7 +21,7 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public int addUser(User user) {
         users.put(user.getId(), user);
-        return 0;
+        return user.getId();
     }
 
     @Override
@@ -51,9 +51,4 @@ public class InMemoryUserStorage implements UserStorage {
         users.remove(userId);
         return userId;
     }
-
-    /*@Override
-    public Optional<User> findUserById(String id) {
-        return Optional.empty();
-    }*/
 }
