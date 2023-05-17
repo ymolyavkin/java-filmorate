@@ -55,14 +55,6 @@ public class UserDbStorage implements UserStorage {
 
         return friendId;
     }
-
-    //@Override
-   /* public void addUserOld(User user) {
-        String sqlQuery = "insert into `user`(email, login, name, birthday) values (?, ?, ?, ?)";
-
-        jdbcTemplate.update(sqlQuery, user.getEmail(), user.getLogin(), user.getName(), user.getBirthday());
-    }*/
-
     @Override
     public int addUser(User user) {
         String sqlQuery = "insert into `user`(email, login, name, birthday) values (?, ?, ?, ?)";
@@ -79,17 +71,6 @@ public class UserDbStorage implements UserStorage {
         return keyHolder.getKey().intValue();
     }
 
-    /*
- public void updateUser(User user) {
-        if (!users.containsKey(user.getId())) {
-            throw new NotFoundException(String.format(
-                    "Пользователь с id %s не найден.",
-                    user.getId()
-            ));
-        }
-        users.put(user.getId(), user);
-    }
- */
     @Override
     public void updateUser(User user) {
         String userId = Integer.toString(user.getId());
@@ -109,18 +90,15 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public User findUserById(Integer userId) {
-        String id = userId.toString();
-
-        SqlRowSet userRows = jdbcTemplate.queryForRowSet("select * from `user` where id = ?", id);
+    public User findUserById(int userId) {
+        SqlRowSet userRows = jdbcTemplate.queryForRowSet("select * from `user` where id = ?", userId);
         if (userRows.next()) {
             String email = userRows.getString("email");
             String login = userRows.getString("login");
             String name = userRows.getString("name");
             LocalDate birthday = LocalDate.parse(userRows.getString("birthday"), formatter);
-            //log.info("Найден пользователь: {} {}", userRows.getString("id"), login);
 
-            User user = new User(name, email, login, birthday);
+                       User user = new User(name, email, login, birthday);
             user.setId(userId);
             user.setFriends(findUsersFriends(userId));
 
@@ -131,7 +109,7 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public int deleteUserById(Integer userId) {
+    public int deleteUserById(int userId) {
         String id = Integer.toString(userId);
         String sqlQuery = "delete from `user` where id = ?";
 
@@ -164,35 +142,7 @@ private Set<Integer> findUsersFriends(int userId) {
         throw new NotFoundException("Пользователь с id " + userId + " не найден.");
     }
 }
-    /*protected void relation(Role role, boolean newer) {
-        // role -> actions
-        String ALL_ACTIONID =
-                "SELECT action.action_id FROM action RIGHT JOIN role_and_action ON role_id WHERE role_id = (?);";
-        String REMOVE_ACTIONID =
-                "DELETE FROM cucgp.`role_and_action` WHERE action_id = (?) AND role_id = (?);";
-        String ADD_ACTIONID = "INSERT INTO cucgp.`role_and_action` (action_id, role_id) VALUES (?, ?);";
 
-        List<Integer> actions =
-                jdbcTemplate.queryForList(ALL_ACTIONID, new Object[]{role.getRoleId()}, Integer.class);
-        ArrayList<Integer> remove = new ArrayList<Integer>();
-        ArrayList<Integer> add = new ArrayList<Integer>();
-
-        if (newer) {
-            remove.addAll(actions);
-            remove.removeAll(role.getActions());
-            for (Integer actionId : remove) {
-                jdbcTemplate.update(REMOVE_ACTIONID, actionId, role.getRoleId());
-            }
-            add.addAll(role.getActions());
-            add.removeAll(actions);
-            for (Integer actionId : add) {
-                jdbcTemplate.update(ADD_ACTIONID, actionId, role.getRoleId());
-            }
-        } else {
-            role.setActions(null);
-            role.setActions(new TreeSet<Integer>(actions));
-        }
-    }*/
     private boolean userExists(int id) {
         String sqlQuery = "select count(*) from `user` where id = ?";
         //noinspection ConstantConditions: return value is always an int, so NPE is impossible here

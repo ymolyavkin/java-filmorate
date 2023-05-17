@@ -11,10 +11,10 @@ public interface UserStorage {
 
     public void updateUser(User user);
 
-    public User findUserById(Integer userId);
+    public User findUserById(int userId);
 
     //Optional<User> findUserById(String id);
 
-    public int deleteUserById(Integer userId);
+    public int deleteUserById(int userId);
     public void addFriend(int userId, int friendId);
 }

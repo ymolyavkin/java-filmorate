@@ -36,7 +36,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User findUserById(Integer userId) {
+    public User findUserById(int userId) {
         if (!users.containsKey(userId)) {
             throw new NotFoundException("Пользователь с id " + userId + " не найден.");
         }
@@ -44,7 +44,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public int deleteUserById(Integer userId) {
+    public int deleteUserById(int userId) {
         if (!users.containsKey(userId)) {
             throw new NotFoundException("Пользователь с id " + userId + " не найден.");
         }
