@@ -2,12 +2,14 @@ package ru.yandex.practicum.filmorate.dao;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -50,14 +52,42 @@ public class FilmDbStorage implements FilmStorage {
         Film film = new Film(name, description, release, duration, mpa_entry, genres);
 
         film.setId(filmId);
-        //user.setFriends(findUsersFriends(userId));
         return film;
     }
 
     @Override
-    public void addFilm(Film film) {
+    public int addFilm(Film film) {
+        String sqlQuery = "insert into `film`(name, description, release, duration, mpa_id) values (?, ?, ?, ?, ?)";
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(connection -> {
+            PreparedStatement stmt = connection.prepareStatement(sqlQuery, new String[]{"id"});
+            stmt.setString(1, film.getName());
+            stmt.setString(2, film.getDescription());
+            stmt.setString(3, film.getReleaseDate().format(formatter));
+            stmt.setString(4, Integer.toString(film.getDuration()));
+            stmt.setString(5, Integer.toString(film.getMpa().getValue()));
+            return stmt;
+        }, keyHolder);
 
+        return keyHolder.getKey().intValue();
     }
+    /*
+     @Override
+    public int addUser(User user) {
+        String sqlQuery = "insert into `user`(email, login, name, birthday) values (?, ?, ?, ?)";
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(connection -> {
+            PreparedStatement stmt = connection.prepareStatement(sqlQuery, new String[]{"id"});
+            stmt.setString(1, user.getEmail());
+            stmt.setString(2, user.getLogin());
+            stmt.setString(3, user.getName());
+            stmt.setString(4, user.getBirthday().format(formatter));
+            return stmt;
+        }, keyHolder);
+
+        return keyHolder.getKey().intValue();
+    }
+     */
 
     @Override
     public void updateFilm(Film film) {

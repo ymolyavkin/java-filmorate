@@ -24,9 +24,8 @@ public class Film implements Comparable<Film> {
     //private final Map<String, Integer> mpa;
     //private final List<Map<String, Integer>> genres;
     private Set<Integer> likes;
-
-private final Map.Entry<String,Integer> mpa;
-private final List<Map.Entry<String, Integer>> genres;
+    private final Map.Entry<String, Integer> mpa;
+    private final List<Map.Entry<String, Integer>> genres;
 /*
 Map.Entry<String,Integer> entry =
     new AbstractMap.SimpleEntry<String, Integer>("exmpleString", 42);
