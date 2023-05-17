@@ -56,6 +56,9 @@ Map.Entry<String,Integer> entry =
     public int hashCode() {
         return Objects.hash(id, name);
     }
+    public int getMpaId() {
+        return mpa.getValue();
+    }
 
     public boolean addLike(int userId) {
         return likes.add(userId);

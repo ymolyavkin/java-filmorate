@@ -6,6 +6,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
@@ -71,41 +72,67 @@ public class FilmDbStorage implements FilmStorage {
 
         return keyHolder.getKey().intValue();
     }
-    /*
-     @Override
-    public int addUser(User user) {
-        String sqlQuery = "insert into `user`(email, login, name, birthday) values (?, ?, ?, ?)";
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbcTemplate.update(connection -> {
-            PreparedStatement stmt = connection.prepareStatement(sqlQuery, new String[]{"id"});
-            stmt.setString(1, user.getEmail());
-            stmt.setString(2, user.getLogin());
-            stmt.setString(3, user.getName());
-            stmt.setString(4, user.getBirthday().format(formatter));
-            return stmt;
-        }, keyHolder);
 
-        return keyHolder.getKey().intValue();
-    }
-     */
 
     @Override
     public void updateFilm(Film film) {
+        //String filmId = Integer.toString(film.getId());
+        int filmId = film.getId();
+        SqlRowSet filmRows = jdbcTemplate.queryForRowSet("select * from `film` where id = ?", filmId);
+        if (filmRows.next()) {
+            String sqlQuery = "update `film` set name = ?, description = ?, release = ?, duration = ?, mpa_id = ? where id = ?";
 
+            jdbcTemplate.update(sqlQuery,
+                    film.getName(),
+                    film.getDescription(),
+                    film.getReleaseDate(),
+                    film.getDuration(),
+                    film.getMpaId(),
+                    film.getId());
+        } else {
+            throw new NotFoundException("Фильм с id " + filmId + " не найден.");
+        }
     }
+
 
     @Override
     public Film findFilmById(int filmId) {
-        return null;
+        SqlRowSet filmRows = jdbcTemplate.queryForRowSet("select * from `film` where id = ?", filmId);
+        if (filmRows.next()) {
+            String name = filmRows.getString("name");
+            String description = filmRows.getString("description");
+            LocalDate release = LocalDate.parse(filmRows.getString("release"), formatter);
+            int duration = filmRows.getInt("duration");
+            int mpa_id = filmRows.getInt("mpa_id");
+
+            Map.Entry<String, Integer> mpa_entry = new AbstractMap.SimpleEntry<String, Integer>("id", mpa_id);
+            Map.Entry<String, Integer> genre = new AbstractMap.SimpleEntry<String, Integer>("id", 1);
+            List<Map.Entry<String, Integer>> genres = new ArrayList<>();
+            genres.add(genre);
+
+            Film film = new Film(name, description, release, duration, mpa_entry, genres);
+            film.setId(filmId);
+
+            return film;
+        } else {
+            throw new NotFoundException("Пользователь с id " + filmId + " не найден.");
+        }
     }
 
     @Override
     public int deleteFilmById(int filmId) {
-        return 0;
+        String sqlQuery = "delete from `film` where id = ?";
+
+        if (jdbcTemplate.update(sqlQuery, filmId) > 0) {
+            log.info("Удалён фильм: {}", filmId);
+        } else {
+            throw new NotFoundException("Фильм с id " + filmId + " не найден.");
+        }
+        return filmId;
     }
 
     private boolean filmExists(int id) {
-        String sqlQuery = "select count(*) from `user` where id = ?";
+        String sqlQuery = "select count(*) from `film` where id = ?";
         //noinspection ConstantConditions: return value is always an int, so NPE is impossible here
         int result = jdbcTemplate.queryForObject(sqlQuery, Integer.class, id);
 
@@ -113,7 +140,6 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     private void selectAllGenres() {
-        // выполняем запрос к базе данных.
         SqlRowSet genreRows = jdbcTemplate.queryForRowSet("select * from genre");
         if (genreRows.next()) {
             log.info("Найден жанр: {} {}", genreRows.getString("id"), genreRows.getString("name"));
