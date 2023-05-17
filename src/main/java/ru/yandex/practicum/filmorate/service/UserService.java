@@ -57,14 +57,15 @@ public class UserService {
     }
 
     public void deleteFriend(int userId, int friendId) {
-        User user = findUserById(userId);
+        userStorage.deleteFriendFromUser(userId, friendId);
+       /* User user = findUserById(userId);
         User friend = findUserById(friendId);
 
         user.deleteFriend(friendId);
         put(user);
 
         friend.deleteFriend(userId);
-        put(friend);
+        put(friend);*/
     }
 
     public List<User> findFriends(int userId) {

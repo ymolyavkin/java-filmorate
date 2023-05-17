@@ -49,12 +49,14 @@ public class UserDbStorage implements UserStorage {
         user.setFriends(findUsersFriends(userId));
         return user;
     }
+
     private int mapRowToFriendId(ResultSet resultSet, int rowNum) throws SQLException {
         int userId = stringToInt(resultSet.getString("one_friend_id"));
         int friendId = stringToInt(resultSet.getString("other_friend_id"));
 
         return friendId;
     }
+
     @Override
     public int addUser(User user) {
         String sqlQuery = "insert into `user`(email, login, name, birthday) values (?, ?, ?, ?)";
@@ -98,7 +100,7 @@ public class UserDbStorage implements UserStorage {
             String name = userRows.getString("name");
             LocalDate birthday = LocalDate.parse(userRows.getString("birthday"), formatter);
 
-                       User user = new User(name, email, login, birthday);
+            User user = new User(name, email, login, birthday);
             user.setId(userId);
             user.setFriends(findUsersFriends(userId));
 
@@ -110,16 +112,29 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public int deleteUserById(int userId) {
-        String id = Integer.toString(userId);
+        //String id = Integer.toString(userId);
         String sqlQuery = "delete from `user` where id = ?";
 
-        if (jdbcTemplate.update(sqlQuery, id) > 0) {
-            log.info("Удалён пользователь: {}", id);
+        if (jdbcTemplate.update(sqlQuery, userId) > 0) {
+            log.info("Удалён пользователь: {}", userId);
         } else {
-            throw new NotFoundException("Пользователь с id " + id + " не найден.");
+            throw new NotFoundException("Пользователь с id " + userId + " не найден.");
         }
-        return 0;
+        return userId;
     }
+
+    @Override
+    public int deleteFriendFromUser(int userId, int friendId) {
+        String sqlQuery = "delete from `friendship` where one_friend_id = ? and other_friend_id = ?";
+
+        if (jdbcTemplate.update(sqlQuery, userId, friendId) > 0) {
+            log.info("У пользователя {} удален друг {}", userId, friendId);
+        } else {
+            throw new NotFoundException("Пользователь с id " + userId + " не найден.");
+        }
+        return friendId;
+    }
+
     @Override
     public void addFriend(int userId, int friendId) {
         if (userExists(userId) && userExists(friendId)) {
@@ -131,17 +146,18 @@ public class UserDbStorage implements UserStorage {
             throw new NotFoundException("Пользователь с id " + userId + " и/или с id " + friendId + " не найден.");
         }
     }
-private Set<Integer> findUsersFriends(int userId) {
-    if (userExists(userId)){
-        String sqlQuery = "select other_friend_id from `friendship` where one_friend_id = ?";
-      //  List<String> listFriends = jdbcTemplate.queryForList(sqlQuery, String.class);
-        List<Integer> listFriends = jdbcTemplate.queryForList(sqlQuery, Integer.class, userId);
 
-        return new HashSet<Integer>(listFriends);
-    } else {
-        throw new NotFoundException("Пользователь с id " + userId + " не найден.");
+    private Set<Integer> findUsersFriends(int userId) {
+        if (userExists(userId)) {
+            String sqlQuery = "select other_friend_id from `friendship` where one_friend_id = ?";
+            //  List<String> listFriends = jdbcTemplate.queryForList(sqlQuery, String.class);
+            List<Integer> listFriends = jdbcTemplate.queryForList(sqlQuery, Integer.class, userId);
+
+            return new HashSet<Integer>(listFriends);
+        } else {
+            throw new NotFoundException("Пользователь с id " + userId + " не найден.");
+        }
     }
-}
 
     private boolean userExists(int id) {
         String sqlQuery = "select count(*) from `user` where id = ?";
