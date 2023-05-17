@@ -3,3 +3,8 @@ INSERT INTO genre (name) VALUES ('Adventure');
 INSERT INTO genre (name) VALUES ('Animated');
 INSERT INTO genre (name) VALUES ('Comedy');
 INSERT INTO genre (name) VALUES ('Drama');
+INSERT INTO mpa (name) VALUES ('G');
+INSERT INTO mpa (name) VALUES ('PG');
+INSERT INTO mpa (name) VALUES ('PG_13');
+INSERT INTO mpa (name) VALUES ('R');
+INSERT INTO mpa (name) VALUES ('NC_17');
