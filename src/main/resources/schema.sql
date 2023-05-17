@@ -27,7 +27,6 @@ CREATE TABLE IF NOT EXISTS `film`
     id          BIGINT AUTO_INCREMENT PRIMARY KEY,
     name        VARCHAR(50)  NOT NULL,
     description VARCHAR(200) NOT NULL,
-    login       VARCHAR(30)  NOT NULL,
     release     DATE         NOT NULL CHECK (release > '1895-12-28'),
     duration    INTEGER CHECK (duration > 0),
     mpa_id      INTEGER      NOT NULL,

@@ -14,18 +14,19 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static ru.yandex.practicum.filmorate.Constants.formatter;
+
 @Slf4j
 @Component("userDbStorage")
 public class UserDbStorage implements UserStorage {
     private final JdbcTemplate jdbcTemplate;
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+  //  private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     public UserDbStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -150,7 +151,6 @@ public class UserDbStorage implements UserStorage {
     private Set<Integer> findUsersFriends(int userId) {
         if (userExists(userId)) {
             String sqlQuery = "select other_friend_id from `friendship` where one_friend_id = ?";
-            //  List<String> listFriends = jdbcTemplate.queryForList(sqlQuery, String.class);
             List<Integer> listFriends = jdbcTemplate.queryForList(sqlQuery, Integer.class, userId);
 
             return new HashSet<Integer>(listFriends);
@@ -167,27 +167,6 @@ public class UserDbStorage implements UserStorage {
         return result == 1;
     }
 
-    /*@Override
-    public Optional<User> findUserById(String id) {
-        // выполняем запрос к базе данных.
-        SqlRowSet userRows = jdbcTemplate.queryForRowSet("select * from `user` where id = ?", id);
-        if (userRows.next()) {
-            // log.info("Найден пользователь: {} {}", userRows.getString("id"), userRows.getString("nickname"));
-            // вы заполните данные пользователя в следующем уроке
-            //  User user = new User();
-            //   user.setId(id);
-            //----------------------------------------------
-            User user = new User("Nick Name", "mail@mail.ru", "dolore", LocalDate.of(1946, 8, 20));
-            int userId = stringToInt(id);
-            user.setId(userId);
-            //----------------------------------------------
-            return Optional.of(user);
-        } else {
-            log.info("Пользователь с идентификатором {} не найден.", id);
-            throw new NotFoundException("Пользователь с id " + id + " не найден.");
-        }
-    }
-*/
     public void insertIntoGenre() {
         String sqlQuery = "insert into genre(name) values (?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -197,22 +176,8 @@ public class UserDbStorage implements UserStorage {
 
             return stmt;
         }, keyHolder);
-
-
     }
 
-    private void selectAllGenres() {
-        // выполняем запрос к базе данных.
-        SqlRowSet genreRows = jdbcTemplate.queryForRowSet("select * from genre");
-        if (genreRows.next()) {
-            log.info("Найден жанр: {} {}", genreRows.getString("id"), genreRows.getString("name"));
-
-
-        } else {
-            log.info("Жанр не найден");
-
-        }
-    }
 
     static int stringToInt(String userInput) {
         // Шаблон выбирает первое число из строки

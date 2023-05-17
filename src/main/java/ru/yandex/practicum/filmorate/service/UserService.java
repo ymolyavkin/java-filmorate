@@ -46,26 +46,10 @@ public class UserService {
 
     public void addFriend(int userId, int friendId) {
         userStorage.addFriend(userId, friendId);
-        /*User user = findUserById(userId);
-        User friend = findUserById(friendId);
-
-        user.addFriend(friendId);
-        put(user);
-
-        friend.addFriend(userId);
-        put(friend);*/
     }
 
     public void deleteFriend(int userId, int friendId) {
         userStorage.deleteFriendFromUser(userId, friendId);
-       /* User user = findUserById(userId);
-        User friend = findUserById(friendId);
-
-        user.deleteFriend(friendId);
-        put(user);
-
-        friend.deleteFriend(userId);
-        put(friend);*/
     }
 
     public List<User> findFriends(int userId) {

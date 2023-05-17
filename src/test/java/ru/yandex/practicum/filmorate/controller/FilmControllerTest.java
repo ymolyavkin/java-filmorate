@@ -57,10 +57,8 @@ class FilmControllerTest {
         genreTwo.put("id", 2);*/
         Map.Entry<String,Integer> ratingMpa =
                 new AbstractMap.SimpleEntry<String, Integer>("id", 1);
-        Map.Entry<String,Integer> genreOne =
-                new AbstractMap.SimpleEntry<String, Integer>("id", 1);
-        Map.Entry<String,Integer> genreTwo =
-                new AbstractMap.SimpleEntry<String, Integer>("id", 2);
+        Map.Entry<String,Integer> genreOne = new AbstractMap.SimpleEntry<String, Integer>("id", 1);
+        Map.Entry<String,Integer> genreTwo = new AbstractMap.SimpleEntry<String, Integer>("id", 2);
 
         var genres = Arrays.asList(genreOne, genreTwo);
         Film film = new Film("nisi eiusmod", "adipisicing",

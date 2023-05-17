@@ -31,7 +31,6 @@ public class User {
         this.login = login;
         this.birthday = birthday;
         friends = new HashSet<>();
-        //friends = new HashMap<>();
     }
 
     public void addFriend(int friendId) {
@@ -42,19 +41,6 @@ public class User {
         friends.remove(friendId);
     }
 
-
-    /* public void addFriend(Integer friendId) {
-         friends.put(friendId, false);
-     }
-
-     public void deleteFriend(Integer friendId) {
-         friends.remove(friendId);
-     }
-
-     public Set<Integer> getFriends() {
-         return friends.keySet();
-     }
- */
     public List<Integer> getCommonFriends(User otherUser) {
         List<Integer> commonFriendsId;
         if (this.getId() == otherUser.getId()) {
