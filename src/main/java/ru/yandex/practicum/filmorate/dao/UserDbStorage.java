@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.dao;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
@@ -16,7 +15,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,15 +38,22 @@ public class UserDbStorage implements UserStorage {
     }
 
     private User mapRowToUser(ResultSet resultSet, int rowNum) throws SQLException {
-        int id = stringToInt(resultSet.getString("id"));
+        int userId = stringToInt(resultSet.getString("id"));
         String email = resultSet.getString("email");
         String login = resultSet.getString("login");
         String name = resultSet.getString("name");
         LocalDate birthday = LocalDate.parse(resultSet.getString("birthday"), formatter);
         User user = new User(name, email, login, birthday);
 
-        user.setId(id);
+        user.setId(userId);
+        user.setFriends(findUsersFriends(userId));
         return user;
+    }
+    private int mapRowToFriendId(ResultSet resultSet, int rowNum) throws SQLException {
+        int userId = stringToInt(resultSet.getString("one_friend_id"));
+        int friendId = stringToInt(resultSet.getString("other_friend_id"));
+
+        return friendId;
     }
 
     //@Override
@@ -71,6 +79,17 @@ public class UserDbStorage implements UserStorage {
         return keyHolder.getKey().intValue();
     }
 
+    /*
+ public void updateUser(User user) {
+        if (!users.containsKey(user.getId())) {
+            throw new NotFoundException(String.format(
+                    "Пользователь с id %s не найден.",
+                    user.getId()
+            ));
+        }
+        users.put(user.getId(), user);
+    }
+ */
     @Override
     public void updateUser(User user) {
         String userId = Integer.toString(user.getId());
@@ -99,10 +118,11 @@ public class UserDbStorage implements UserStorage {
             String login = userRows.getString("login");
             String name = userRows.getString("name");
             LocalDate birthday = LocalDate.parse(userRows.getString("birthday"), formatter);
-            log.info("Найден пользователь: {} {}", userRows.getString("id"), login);
+            //log.info("Найден пользователь: {} {}", userRows.getString("id"), login);
 
             User user = new User(name, email, login, birthday);
             user.setId(userId);
+            user.setFriends(findUsersFriends(userId));
 
             return user;
         } else {
@@ -122,9 +142,59 @@ public class UserDbStorage implements UserStorage {
         }
         return 0;
     }
-    public boolean exists(int id) {
-        String sqlQuery = "select count(*) from `user` where id = ?";
+    @Override
+    public void addFriend(int userId, int friendId) {
+        if (userExists(userId) && userExists(friendId)) {
+            String sqlQuery = "insert into `friendship`(one_friend_id, other_friend_id) values (?, ?)";
 
+            jdbcTemplate.update(sqlQuery, userId, friendId);
+            log.info("Пользователь с идентификатором {} добавлен в друзья пользователю {}.", friendId, userId);
+        } else {
+            throw new NotFoundException("Пользователь с id " + userId + " и/или с id " + friendId + " не найден.");
+        }
+    }
+private Set<Integer> findUsersFriends(int userId) {
+    if (userExists(userId)){
+        String sqlQuery = "select other_friend_id from `friendship` where one_friend_id = ?";
+      //  List<String> listFriends = jdbcTemplate.queryForList(sqlQuery, String.class);
+        List<Integer> listFriends = jdbcTemplate.queryForList(sqlQuery, Integer.class, userId);
+
+        return new HashSet<Integer>(listFriends);
+    } else {
+        throw new NotFoundException("Пользователь с id " + userId + " не найден.");
+    }
+}
+    /*protected void relation(Role role, boolean newer) {
+        // role -> actions
+        String ALL_ACTIONID =
+                "SELECT action.action_id FROM action RIGHT JOIN role_and_action ON role_id WHERE role_id = (?);";
+        String REMOVE_ACTIONID =
+                "DELETE FROM cucgp.`role_and_action` WHERE action_id = (?) AND role_id = (?);";
+        String ADD_ACTIONID = "INSERT INTO cucgp.`role_and_action` (action_id, role_id) VALUES (?, ?);";
+
+        List<Integer> actions =
+                jdbcTemplate.queryForList(ALL_ACTIONID, new Object[]{role.getRoleId()}, Integer.class);
+        ArrayList<Integer> remove = new ArrayList<Integer>();
+        ArrayList<Integer> add = new ArrayList<Integer>();
+
+        if (newer) {
+            remove.addAll(actions);
+            remove.removeAll(role.getActions());
+            for (Integer actionId : remove) {
+                jdbcTemplate.update(REMOVE_ACTIONID, actionId, role.getRoleId());
+            }
+            add.addAll(role.getActions());
+            add.removeAll(actions);
+            for (Integer actionId : add) {
+                jdbcTemplate.update(ADD_ACTIONID, actionId, role.getRoleId());
+            }
+        } else {
+            role.setActions(null);
+            role.setActions(new TreeSet<Integer>(actions));
+        }
+    }*/
+    private boolean userExists(int id) {
+        String sqlQuery = "select count(*) from `user` where id = ?";
         //noinspection ConstantConditions: return value is always an int, so NPE is impossible here
         int result = jdbcTemplate.queryForObject(sqlQuery, Integer.class, id);
 
