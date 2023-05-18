@@ -80,5 +80,25 @@ public class FilmService {
     public int delete(int filmId) {
         return filmStorage.deleteFilmById(filmId);
     }
+
+    public List<String> findAllGenres() {
+        return filmStorage.findAllGenres();
+    }
+
+    public String findGenreById(Integer genreId) {
+        return filmStorage.findGenreById(genreId);
+    }
+
+    public String createGenre(String genre) {
+        return filmStorage.createGenre(genre);
+    }
+
+    public String findMpaById(Integer mpaId) {
+        return filmStorage.findMpaById(mpaId);
+    }
+
+    public List<String> findAllMpa() {
+        return filmStorage.findAllMpa();
+    }
 }
 

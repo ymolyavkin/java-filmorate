@@ -48,4 +48,29 @@ public class InMemoryFilmStorage implements FilmStorage {
         films.remove(filmId);
         return filmId;
     }
+
+    @Override
+    public List<String> findAllGenres() {
+        return null;
+    }
+
+    @Override
+    public String findGenreById(Integer genreId) {
+        return null;
+    }
+
+    @Override
+    public String createGenre(String genre) {
+        return null;
+    }
+
+    @Override
+    public String findMpaById(Integer mpaId) {
+        return null;
+    }
+
+    @Override
+    public List<String> findAllMpa() {
+        return null;
+    }
 }

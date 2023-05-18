@@ -14,4 +14,14 @@ public interface FilmStorage {
     public Film findFilmById(int filmId);
 
     public int deleteFilmById(int filmId);
+
+    public List<String> findAllGenres();
+
+    public String findGenreById(Integer genreId);
+
+    public String createGenre(String genre);
+
+    public String findMpaById(Integer mpaId);
+
+    public List<String> findAllMpa();
 }
