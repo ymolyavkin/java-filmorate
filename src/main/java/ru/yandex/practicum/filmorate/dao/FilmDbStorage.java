@@ -14,10 +14,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static ru.yandex.practicum.filmorate.Constants.formatter;
 import static ru.yandex.practicum.filmorate.dao.UserDbStorage.stringToInt;
@@ -70,9 +67,54 @@ public class FilmDbStorage implements FilmStorage {
             return stmt;
         }, keyHolder);
 
+        insertIdGenresIntoTableFilmGenre(film);
+        insertLikeIntoTableUserLikefilm(film);
+
         return keyHolder.getKey().intValue();
     }
 
+    private void insertIdGenresIntoTableFilmGenre(Film film) {
+        int filmId = film.getId();
+        List<Map.Entry<String, Integer>> idGenres = film.getGenres();
+        for (Map.Entry<String, Integer> entryGenre : idGenres) {
+            String sqlQuery = "insert into `film_genre`(film_id, genre_id) values (?, ?)";
+            jdbcTemplate.update(sqlQuery, filmId, entryGenre.getValue());
+            log.info("Фильму с id {} добавлен id жанра {}.", filmId, entryGenre.getValue());
+        }
+    }
+
+    private void insertLikeIntoTableUserLikefilm(Film film) {
+        int filmId = film.getId();
+        Set<Integer> likes = film.getLikes();
+        for (Integer userIdLike : likes) {
+            String sqlQuery = "insert into `user_likefilm`(user_id, film_id) values (?, ?)";
+            jdbcTemplate.update(sqlQuery, userIdLike, filmId);
+            log.info("Фильму с id {} поставил лайк пользователь с id {}.", filmId, userIdLike);
+        }
+    }
+/*
+public void addFriend(int userId, int friendId) {
+        if (userExists(userId) && userExists(friendId)) {
+            String sqlQuery = "insert into `friendship`(one_friend_id, other_friend_id) values (?, ?)";
+
+            jdbcTemplate.update(sqlQuery, userId, friendId);
+            log.info("Пользователь с идентификатором {} добавлен в друзья пользователю {}.", friendId, userId);
+        } else {
+            throw new NotFoundException("Пользователь с id " + userId + " и/или с id " + friendId + " не найден.");
+        }
+    }
+    --------------------------------------
+private Set<Integer> findUsersFriends(int userId) {
+        if (userExists(userId)) {
+            String sqlQuery = "select other_friend_id from `friendship` where one_friend_id = ?";
+            List<Integer> listFriends = jdbcTemplate.queryForList(sqlQuery, Integer.class, userId);
+
+            return new HashSet<Integer>(listFriends);
+        } else {
+            throw new NotFoundException("Пользователь с id " + userId + " не найден.");
+        }
+    }
+ */
 
     @Override
     public void updateFilm(Film film) {
@@ -89,6 +131,9 @@ public class FilmDbStorage implements FilmStorage {
                     film.getDuration(),
                     film.getMpaId(),
                     film.getId());
+
+            insertIdGenresIntoTableFilmGenre(film);
+            insertLikeIntoTableUserLikefilm(film);
         } else {
             throw new NotFoundException("Фильм с id " + filmId + " не найден.");
         }
@@ -104,11 +149,15 @@ public class FilmDbStorage implements FilmStorage {
             LocalDate release = LocalDate.parse(filmRows.getString("release"), formatter);
             int duration = filmRows.getInt("duration");
             int mpa_id = filmRows.getInt("mpa_id");
-
             Map.Entry<String, Integer> mpa_entry = new AbstractMap.SimpleEntry<String, Integer>("id", mpa_id);
-            Map.Entry<String, Integer> genre = new AbstractMap.SimpleEntry<String, Integer>("id", 1);
             List<Map.Entry<String, Integer>> genres = new ArrayList<>();
-            genres.add(genre);
+
+            SqlRowSet genreRows = jdbcTemplate.queryForRowSet("select genre_id from `film_genre` where film_id = ?", filmId);
+            if (genreRows.next()) {
+                int idGenre = genreRows.getInt("genre_id");
+                Map.Entry<String, Integer> genre = new AbstractMap.SimpleEntry<String, Integer>("id", idGenre);
+                genres.add(genre);
+            }
 
             Film film = new Film(name, description, release, duration, mpa_entry, genres);
             film.setId(filmId);
