@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS `film`
 CREATE TABLE IF NOT EXISTS `film_genre` (
                                           film_id BIGINT NOT NULL,
                                           genre_id INTEGER,
-                                          CONSTRAINT U_film_genre UNIQUE (film_id, genre_id),
+                                          --CONSTRAINT U_film_genre UNIQUE (film_id, genre_id),
                                           CONSTRAINT FK_film_id FOREIGN KEY(film_id) REFERENCES `film`(id),
                                           CONSTRAINT FK_genre_id FOREIGN KEY(genre_id) REFERENCES `genre`(id)
 );
