@@ -31,10 +31,6 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public List<Film> findAll() {
         String sqlQuery = "select id, name, description, release,  duration, mpa_id from `film`";
-        var result = jdbcTemplate.query(sqlQuery, this::mapRowToFilm);
-        for (Film film : result) {
-
-        }
         return jdbcTemplate.query(sqlQuery, this::mapRowToFilm);
     }
 
@@ -74,8 +70,12 @@ public class FilmDbStorage implements FilmStorage {
             return stmt;
         }, keyHolder);
 
-        addFilmGenre(film);
-        addUserLikeFilm(film);
+        if (film.getGenres() != null) {
+            addFilmGenre(film);
+        }
+        if (!film.getLikes().isEmpty()) {
+            addUserLikeFilm(film);
+        }
 
         return keyHolder.getKey().intValue();
     }
@@ -150,10 +150,14 @@ public class FilmDbStorage implements FilmStorage {
                     film.getMpaId(),
                     film.getId());
 
-            deleteFilmGenre(film);
-            deleteUserLikeFilm(film);
-            addFilmGenre(film);
-            addUserLikeFilm(film);
+            if (film.getGenres() != null) {
+                deleteFilmGenre(film);
+                addFilmGenre(film);
+            }
+            if (!film.getLikes().isEmpty()) {
+                deleteUserLikeFilm(film);
+                addUserLikeFilm(film);
+            }
         } else {
             throw new NotFoundException("Фильм с id " + filmId + " не найден.");
         }
@@ -255,7 +259,7 @@ public class FilmDbStorage implements FilmStorage {
         for (Integer userId : likes) {
             String sqlQuery = "delete from `user_likefilm` where film_id = ? and user_id = ?";
             if (jdbcTemplate.update(sqlQuery, filmId, userId) > 0) {
-                log.info("Удалён лайк пользователя {} у фильма {}",userId, filmId);
+                log.info("Удалён лайк пользователя {} у фильма {}", userId, filmId);
             }
         }
 
@@ -271,8 +275,8 @@ public class FilmDbStorage implements FilmStorage {
         }
         for (Integer genreId : setGenres) {
             String sqlQuery = "delete from `film_genre` where film_id = ? and genre_id = ?";
-            if (jdbcTemplate.update(sqlQuery, filmId,genreId) > 0) {
-                log.info("Удалён жанр {} у фильма {}",genreId, filmId);
+            if (jdbcTemplate.update(sqlQuery, filmId, genreId) > 0) {
+                log.info("Удалён жанр {} у фильма {}", genreId, filmId);
             }
         }
     }
