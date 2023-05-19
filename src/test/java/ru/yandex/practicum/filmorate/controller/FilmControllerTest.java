@@ -11,7 +11,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
-import ru.yandex.practicum.filmorate.model.Rating;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -36,7 +35,7 @@ class FilmControllerTest {
                 new AbstractMap.SimpleEntry<String, Integer>("id", 1);
         Map.Entry<String, Integer> genreTwo =
                 new AbstractMap.SimpleEntry<String, Integer>("id", 2);*/
-        Mpa ratingMpa = new Mpa(1, Rating.G);
+        Mpa ratingMpa = new Mpa(1, "G");
         Genre genreOne = new Genre(1, "Drama");
         Genre genreTwo = new Genre(2, "Komedy");
 
@@ -53,7 +52,7 @@ class FilmControllerTest {
        /* Map.Entry<String, Integer> genreOne = new AbstractMap.SimpleEntry<String, Integer>("id", 1);
         Map.Entry<String, Integer> genreTwo = new AbstractMap.SimpleEntry<String, Integer>("id", 2);
 */
-        Mpa ratingMpa = new Mpa(1, Rating.G);
+        Mpa ratingMpa = new Mpa(1, "G");
         Genre genreOne = new Genre(1, "Drama");
         Genre genreTwo = new Genre(2, "Komedy");
         var genres = Arrays.asList(genreOne, genreTwo);

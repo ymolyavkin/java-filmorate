@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class Mpa {
     private final int id;
-    private final Rating name;
+    private final String name;
 }

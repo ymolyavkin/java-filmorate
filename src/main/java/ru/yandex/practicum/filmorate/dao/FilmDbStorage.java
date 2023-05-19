@@ -10,7 +10,7 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
-import ru.yandex.practicum.filmorate.model.Rating;
+//import ru.yandex.practicum.filmorate.model.Rating;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.sql.PreparedStatement;
@@ -45,7 +45,7 @@ public class FilmDbStorage implements FilmStorage {
         int mpaId = stringToInt(resultSet.getString("mpa_id"));
         LocalDate release = LocalDate.parse(resultSet.getString("release"), formatter);
         //Map.Entry<String, Integer> mpa_entry = new AbstractMap.SimpleEntry<String, Integer>("id", mpa_id);
-        Rating rating = findNameMpaById(mpaId);
+        String rating = findNameMpaById(mpaId);
         Mpa mpa = new Mpa(mpaId, rating);
        // List<Map.Entry<String, Integer>> genres = new ArrayList<>();
         List<Genre> filmGenres = new ArrayList<>();
@@ -61,12 +61,12 @@ public class FilmDbStorage implements FilmStorage {
         film.setId(filmId);
         return film;
     }
-    private Rating findNameMpaById(Integer mpaId) {
+    private String findNameMpaById(Integer mpaId) {
         SqlRowSet genreRows = jdbcTemplate.queryForRowSet("select name from `mpa` where id = ?", mpaId);
         if (genreRows.next()) {
             String name = genreRows.getString("name");
 
-            return Rating.valueOf(name);
+            return name;
         } else {
             throw new NotFoundException("mpa с id " + mpaId + " не найден.");
         }
@@ -165,7 +165,7 @@ public class FilmDbStorage implements FilmStorage {
             LocalDate release = LocalDate.parse(filmRows.getString("release"), formatter);
             int duration = filmRows.getInt("duration");
             int mpaId = filmRows.getInt("mpa_id");
-            Rating rating = findNameMpaById(mpaId);
+            String rating = findNameMpaById(mpaId);
             Mpa mpa = new Mpa(mpaId, rating);
             //Map.Entry<String, Integer> mpa_entry = new AbstractMap.SimpleEntry<String, Integer>("id", mpa_id);
             //List<Map.Entry<String, Integer>> genres = new ArrayList<>();
