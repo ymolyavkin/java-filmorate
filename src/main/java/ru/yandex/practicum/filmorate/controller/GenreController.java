@@ -22,9 +22,4 @@ public class GenreController {
     public Genre findGenreById(@PathVariable("genreId") Integer genreId) {
         return filmService.findGenreById(genreId);
     }
-
-    @PostMapping
-    public String createGenre(@RequestBody String genre) {
-        return filmService.createGenre(genre);
-    }
 }

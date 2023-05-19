@@ -90,10 +90,6 @@ public class FilmService {
         return filmStorage.findGenreById(genreId);
     }
 
-    public String createGenre(String genre) {
-        return filmStorage.createGenre(genre);
-    }
-
     public String findMpaById(Integer mpaId) {
         return filmStorage.findMpaById(mpaId);
     }

@@ -216,10 +216,6 @@ public class FilmDbStorage implements FilmStorage {
         }
     }
 
-    @Override
-    public String createGenre(String genre) {
-        return null;
-    }
 
     @Override
     public String findMpaById(Integer mpaId) {

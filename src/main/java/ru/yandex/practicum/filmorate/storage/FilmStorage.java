@@ -20,8 +20,6 @@ public interface FilmStorage {
 
     public Genre findGenreById(Integer genreId);
 
-    public String createGenre(String genre);
-
     public String findMpaById(Integer mpaId);
 
     public List<String> findAllMpa();
