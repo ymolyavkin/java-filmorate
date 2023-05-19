@@ -44,14 +44,16 @@ public class FilmDbStorage implements FilmStorage {
         LocalDate release = LocalDate.parse(resultSet.getString("release"), formatter);
         Map.Entry<String, Integer> mpa_entry = new AbstractMap.SimpleEntry<String, Integer>("id", mpa_id);
 
-        List<Map.Entry<String, Integer>> genres = new ArrayList<>();
+       // List<Map.Entry<String, Integer>> genres = new ArrayList<>();
+        List<Genre> filmGenres = new ArrayList<>();
         Set<Integer> genresIds = findFilmsGenres(filmId);
         for (Integer genreId : genresIds) {
-            Map.Entry<String, Integer> filmGenre = new AbstractMap.SimpleEntry<String, Integer>("id", genreId);
-            genres.add(filmGenre);
+            filmGenres.add(findGenreById(genreId));
+            //Map.Entry<String, Integer> filmGenre = new AbstractMap.SimpleEntry<String, Integer>("id", genreId);
+            //genres.add(filmGenre);
         }
 
-        Film film = new Film(name, description, release, duration, mpa_entry, genres);
+        Film film = new Film(name, description, release, duration, mpa_entry, filmGenres);
 
         film.setId(filmId);
         return film;
@@ -83,11 +85,12 @@ public class FilmDbStorage implements FilmStorage {
 
     private void addFilmGenre(Film film) {
         int filmId = film.getId();
-        List<Map.Entry<String, Integer>> idGenres = film.getGenres();
-        for (Map.Entry<String, Integer> entryGenre : idGenres) {
+        //List<Map.Entry<String, Integer>> idGenres = film.getGenres();
+        List<Genre> idGenres = film.getGenres();
+        for (Genre genre : idGenres) {
             String sqlQuery = "insert into `film_genre`(film_id, genre_id) values (?, ?)";
-            jdbcTemplate.update(sqlQuery, filmId, entryGenre.getValue());
-            log.info("Фильму с id {} добавлен id жанра {}.", filmId, entryGenre.getValue());
+            jdbcTemplate.update(sqlQuery, filmId, genre.getId());
+            log.info("Фильму с id {} добавлен id жанра {}.", filmId, genre.getId());
         }
     }
 
@@ -150,16 +153,20 @@ public class FilmDbStorage implements FilmStorage {
             int duration = filmRows.getInt("duration");
             int mpa_id = filmRows.getInt("mpa_id");
             Map.Entry<String, Integer> mpa_entry = new AbstractMap.SimpleEntry<String, Integer>("id", mpa_id);
-            List<Map.Entry<String, Integer>> genres = new ArrayList<>();
+            //List<Map.Entry<String, Integer>> genres = new ArrayList<>();
+            List<Genre> filmGenres = new ArrayList<>();
 
             SqlRowSet genreRows = jdbcTemplate.queryForRowSet("select genre_id from `film_genre` where film_id = ?", filmId);
             if (genreRows.next()) {
                 int idGenre = genreRows.getInt("genre_id");
-                Map.Entry<String, Integer> genre = new AbstractMap.SimpleEntry<String, Integer>("id", idGenre);
-                genres.add(genre);
+                filmGenres.add(findGenreById(idGenre));
+                //Map.Entry<String, Integer> genre = new AbstractMap.SimpleEntry<String, Integer>("id", idGenre);
+                //genres.add(genre);
+
             }
 
-            Film film = new Film(name, description, release, duration, mpa_entry, genres);
+
+            Film film = new Film(name, description, release, duration, mpa_entry, filmGenres);
             film.setId(filmId);
 
             return film;
@@ -240,9 +247,10 @@ public class FilmDbStorage implements FilmStorage {
         int filmId = film.getId();
         Set<Integer> setGenres = new HashSet<>();
 
-        List<Map.Entry<String, Integer>> mapsGenres = film.getGenres();
-        for (Map.Entry<String, Integer> mapsGenre : mapsGenres) {
-            setGenres.add(mapsGenre.getValue());
+        //List<Map.Entry<String, Integer>> mapsGenres = film.getGenres();
+        List<Genre> mapsGenres = film.getGenres();
+        for (Genre genre : mapsGenres) {
+            setGenres.add(genre.getId());
         }
         for (Integer genreId : setGenres) {
             String sqlQuery = "delete from `film_genre` where film_id = ? and genre_id = ?";

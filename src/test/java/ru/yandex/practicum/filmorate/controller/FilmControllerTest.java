@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Rating;
 
 import java.time.LocalDate;
@@ -28,18 +29,14 @@ class FilmControllerTest {
     private ObjectMapper objectMapper;
 
     private Film createTestFilm() {
-       /* Map<String, Integer> ratingMpa = new HashMap<>();
-        ratingMpa.put("id", 1);
-        Map<String, Integer> genreOne = new HashMap<>();
-        Map<String, Integer> genreTwo = new HashMap<>();
-        genreOne.put("id", 1);
-        genreTwo.put("id", 2);*/
-        Map.Entry<String,Integer> ratingMpa =
+        Map.Entry<String, Integer> ratingMpa =
                 new AbstractMap.SimpleEntry<String, Integer>("id", 1);
-        Map.Entry<String,Integer> genreOne =
+        /*Map.Entry<String, Integer> genreOne =
                 new AbstractMap.SimpleEntry<String, Integer>("id", 1);
-        Map.Entry<String,Integer> genreTwo =
-                new AbstractMap.SimpleEntry<String, Integer>("id", 2);
+        Map.Entry<String, Integer> genreTwo =
+                new AbstractMap.SimpleEntry<String, Integer>("id", 2);*/
+        Genre genreOne = new Genre(1, "Drama");
+        Genre genreTwo = new Genre(2, "Komedy");
 
         var genres = Arrays.asList(genreOne, genreTwo);
         Film film = new Film("nisi eiusmod", "adipisicing",
@@ -49,17 +46,13 @@ class FilmControllerTest {
     }
 
     private Film createTestFilmWithId9999() {
-        /*Map<String, Integer> ratingMpa = new HashMap<>();
-        ratingMpa.put("id", 1);
-        Map<String, Integer> genreOne = new HashMap<>();
-        Map<String, Integer> genreTwo = new HashMap<>();
-        genreOne.put("id", 1);
-        genreTwo.put("id", 2);*/
-        Map.Entry<String,Integer> ratingMpa =
+        Map.Entry<String, Integer> ratingMpa =
                 new AbstractMap.SimpleEntry<String, Integer>("id", 1);
-        Map.Entry<String,Integer> genreOne = new AbstractMap.SimpleEntry<String, Integer>("id", 1);
-        Map.Entry<String,Integer> genreTwo = new AbstractMap.SimpleEntry<String, Integer>("id", 2);
-
+       /* Map.Entry<String, Integer> genreOne = new AbstractMap.SimpleEntry<String, Integer>("id", 1);
+        Map.Entry<String, Integer> genreTwo = new AbstractMap.SimpleEntry<String, Integer>("id", 2);
+*/
+        Genre genreOne = new Genre(1, "Drama");
+        Genre genreTwo = new Genre(2, "Komedy");
         var genres = Arrays.asList(genreOne, genreTwo);
         Film film = new Film("nisi eiusmod", "adipisicing",
                 LocalDate.of(1967, 3, 25), 100, ratingMpa, genres);
