@@ -10,7 +10,6 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
-//import ru.yandex.practicum.filmorate.model.Rating;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.sql.PreparedStatement;
@@ -44,16 +43,14 @@ public class FilmDbStorage implements FilmStorage {
         int duration = stringToInt(resultSet.getString("duration"));
         int mpaId = stringToInt(resultSet.getString("mpa_id"));
         LocalDate release = LocalDate.parse(resultSet.getString("release"), formatter);
-        //Map.Entry<String, Integer> mpa_entry = new AbstractMap.SimpleEntry<String, Integer>("id", mpa_id);
+
         String rating = findNameMpaById(mpaId);
         Mpa mpa = new Mpa(mpaId, rating);
-       // List<Map.Entry<String, Integer>> genres = new ArrayList<>();
+
         List<Genre> filmGenres = new ArrayList<>();
         Set<Integer> genresIds = findFilmsGenres(filmId);
         for (Integer genreId : genresIds) {
             filmGenres.add(findGenreById(genreId));
-            //Map.Entry<String, Integer> filmGenre = new AbstractMap.SimpleEntry<String, Integer>("id", genreId);
-            //genres.add(filmGenre);
         }
 
         Film film = new Film(name, description, release, duration, mpa, filmGenres);
@@ -177,9 +174,7 @@ public class FilmDbStorage implements FilmStorage {
                 filmGenres.add(findGenreById(idGenre));
                 //Map.Entry<String, Integer> genre = new AbstractMap.SimpleEntry<String, Integer>("id", idGenre);
                 //genres.add(genre);
-
             }
-
 
             Film film = new Film(name, description, release, duration, mpa, filmGenres);
             film.setId(filmId);

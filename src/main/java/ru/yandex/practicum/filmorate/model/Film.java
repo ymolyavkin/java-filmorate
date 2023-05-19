@@ -3,6 +3,8 @@ package ru.yandex.practicum.filmorate.model;
 import java.time.LocalDate;
 import java.util.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 import ru.yandex.practicum.filmorate.validation.Release;
@@ -58,6 +60,7 @@ Map.Entry<String,Integer> entry =
     public int hashCode() {
         return Objects.hash(id, name);
     }
+    @JsonIgnore
     public int getMpaId() {
         return mpa.getId();
     }
