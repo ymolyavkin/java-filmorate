@@ -24,7 +24,8 @@ public class Film implements Comparable<Film> {
     //private final Map<String, Integer> mpa;
     //private final List<Map<String, Integer>> genres;
     private Set<Integer> likes;
-    private final Map.Entry<String, Integer> mpa;
+   // private final Map.Entry<String, Integer> mpa;
+    private final Mpa mpa;
     private final List<Genre> genres;
    // private final List<Map.Entry<String, Integer>> genres;
 /*
@@ -35,7 +36,7 @@ Map.Entry<String,Integer> entry =
     /*public Film(String name, String description, LocalDate releaseDate, int duration, Map<String,
             Integer> mpa, List<Map<String, Integer>> genres) {*/
     public Film(String name, String description, LocalDate releaseDate, int duration,
-                Map.Entry<String, Integer> mpa, List<Genre> genres) {
+                Mpa mpa, List<Genre> genres) {
         this.name = name;
         this.description = description;
         this.releaseDate = releaseDate;
@@ -58,7 +59,7 @@ Map.Entry<String,Integer> entry =
         return Objects.hash(id, name);
     }
     public int getMpaId() {
-        return mpa.getValue();
+        return mpa.getId();
     }
 
     public boolean addLike(int userId) {

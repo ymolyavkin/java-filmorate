@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.Mpa;
+import ru.yandex.practicum.filmorate.model.Rating;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.sql.PreparedStatement;
@@ -40,10 +42,11 @@ public class FilmDbStorage implements FilmStorage {
         String name = resultSet.getString("name");
         String description = resultSet.getString("description");
         int duration = stringToInt(resultSet.getString("duration"));
-        int mpa_id = stringToInt(resultSet.getString("mpa_id"));
+        int mpaId = stringToInt(resultSet.getString("mpa_id"));
         LocalDate release = LocalDate.parse(resultSet.getString("release"), formatter);
-        Map.Entry<String, Integer> mpa_entry = new AbstractMap.SimpleEntry<String, Integer>("id", mpa_id);
-
+        //Map.Entry<String, Integer> mpa_entry = new AbstractMap.SimpleEntry<String, Integer>("id", mpa_id);
+        Rating rating = findNameMpaById(mpaId);
+        Mpa mpa = new Mpa(mpaId, rating);
        // List<Map.Entry<String, Integer>> genres = new ArrayList<>();
         List<Genre> filmGenres = new ArrayList<>();
         Set<Integer> genresIds = findFilmsGenres(filmId);
@@ -53,10 +56,20 @@ public class FilmDbStorage implements FilmStorage {
             //genres.add(filmGenre);
         }
 
-        Film film = new Film(name, description, release, duration, mpa_entry, filmGenres);
+        Film film = new Film(name, description, release, duration, mpa, filmGenres);
 
         film.setId(filmId);
         return film;
+    }
+    private Rating findNameMpaById(Integer mpaId) {
+        SqlRowSet genreRows = jdbcTemplate.queryForRowSet("select name from `mpa` where id = ?", mpaId);
+        if (genreRows.next()) {
+            String name = genreRows.getString("name");
+
+            return Rating.valueOf(name);
+        } else {
+            throw new NotFoundException("mpa с id " + mpaId + " не найден.");
+        }
     }
 
     @Override
@@ -69,7 +82,7 @@ public class FilmDbStorage implements FilmStorage {
             stmt.setString(2, film.getDescription());
             stmt.setString(3, film.getReleaseDate().format(formatter));
             stmt.setString(4, Integer.toString(film.getDuration()));
-            stmt.setString(5, Integer.toString(film.getMpa().getValue()));
+            stmt.setString(5, Integer.toString(film.getMpaId()));
             return stmt;
         }, keyHolder);
 
@@ -151,8 +164,10 @@ public class FilmDbStorage implements FilmStorage {
             String description = filmRows.getString("description");
             LocalDate release = LocalDate.parse(filmRows.getString("release"), formatter);
             int duration = filmRows.getInt("duration");
-            int mpa_id = filmRows.getInt("mpa_id");
-            Map.Entry<String, Integer> mpa_entry = new AbstractMap.SimpleEntry<String, Integer>("id", mpa_id);
+            int mpaId = filmRows.getInt("mpa_id");
+            Rating rating = findNameMpaById(mpaId);
+            Mpa mpa = new Mpa(mpaId, rating);
+            //Map.Entry<String, Integer> mpa_entry = new AbstractMap.SimpleEntry<String, Integer>("id", mpa_id);
             //List<Map.Entry<String, Integer>> genres = new ArrayList<>();
             List<Genre> filmGenres = new ArrayList<>();
 
@@ -166,7 +181,7 @@ public class FilmDbStorage implements FilmStorage {
             }
 
 
-            Film film = new Film(name, description, release, duration, mpa_entry, filmGenres);
+            Film film = new Film(name, description, release, duration, mpa, filmGenres);
             film.setId(filmId);
 
             return film;

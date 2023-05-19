@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.model.Rating;
 
 import java.time.LocalDate;
@@ -29,12 +30,13 @@ class FilmControllerTest {
     private ObjectMapper objectMapper;
 
     private Film createTestFilm() {
-        Map.Entry<String, Integer> ratingMpa =
-                new AbstractMap.SimpleEntry<String, Integer>("id", 1);
+       /* Map.Entry<String, Integer> ratingMpa =
+                new AbstractMap.SimpleEntry<String, Integer>("id", 1);*/
         /*Map.Entry<String, Integer> genreOne =
                 new AbstractMap.SimpleEntry<String, Integer>("id", 1);
         Map.Entry<String, Integer> genreTwo =
                 new AbstractMap.SimpleEntry<String, Integer>("id", 2);*/
+        Mpa ratingMpa = new Mpa(1, Rating.G);
         Genre genreOne = new Genre(1, "Drama");
         Genre genreTwo = new Genre(2, "Komedy");
 
@@ -46,11 +48,12 @@ class FilmControllerTest {
     }
 
     private Film createTestFilmWithId9999() {
-        Map.Entry<String, Integer> ratingMpa =
-                new AbstractMap.SimpleEntry<String, Integer>("id", 1);
+        /*Map.Entry<String, Integer> ratingMpa =
+                new AbstractMap.SimpleEntry<String, Integer>("id", 1);*/
        /* Map.Entry<String, Integer> genreOne = new AbstractMap.SimpleEntry<String, Integer>("id", 1);
         Map.Entry<String, Integer> genreTwo = new AbstractMap.SimpleEntry<String, Integer>("id", 2);
 */
+        Mpa ratingMpa = new Mpa(1, Rating.G);
         Genre genreOne = new Genre(1, "Drama");
         Genre genreTwo = new Genre(2, "Komedy");
         var genres = Arrays.asList(genreOne, genreTwo);
