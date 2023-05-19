@@ -58,6 +58,7 @@ public class FilmDbStorage implements FilmStorage {
         film.setId(filmId);
         return film;
     }
+
     private String findNameMpaById(Integer mpaId) {
         SqlRowSet genreRows = jdbcTemplate.queryForRowSet("select name from `mpa` where id = ?", mpaId);
         if (genreRows.next()) {
@@ -84,7 +85,8 @@ public class FilmDbStorage implements FilmStorage {
         }, keyHolder);
 
         if (film.getGenres() != null) {
-            addFilmGenre(film);
+            Set genreIds = getGenreIds(film);
+            addGenresToFilm(film, genreIds);
         }
         if (!film.getLikes().isEmpty()) {
             addUserLikeFilm(film);
@@ -93,14 +95,22 @@ public class FilmDbStorage implements FilmStorage {
         return keyHolder.getKey().intValue();
     }
 
-    private void addFilmGenre(Film film) {
+    private Set getGenreIds(Film film) {
+        Set<Integer> genreIds = new HashSet<>();
+        List<Genre> genres = film.getGenres();
+        for (Genre genre : genres) {
+            genreIds.add(genre.getId());
+        }
+        return genreIds;
+    }
+
+    private void addGenresToFilm(Film film, Set<Integer> genreIds) {
         int filmId = film.getId();
-        //List<Map.Entry<String, Integer>> idGenres = film.getGenres();
-        List<Genre> idGenres = film.getGenres();
-        for (Genre genre : idGenres) {
+
+        for (int genreId : genreIds) {
             String sqlQuery = "insert into `film_genre`(film_id, genre_id) values (?, ?)";
-            jdbcTemplate.update(sqlQuery, filmId, genre.getId());
-            log.info("Фильму с id {} добавлен id жанра {}.", filmId, genre.getId());
+            jdbcTemplate.update(sqlQuery, filmId, genreId);
+            log.info("Фильму с id {} добавлен id жанра {}.", filmId, genreId);
         }
     }
 
@@ -140,16 +150,55 @@ public class FilmDbStorage implements FilmStorage {
                     film.getMpaId(),
                     film.getId());
 
-            if (film.getGenres() != null) {
+            updateGenres(film);
+
+
+            /*if (film.getGenres() != null) {
                 deleteFilmGenre(film);
                 addFilmGenre(film);
-            }
+            }*/
             if (!film.getLikes().isEmpty()) {
                 deleteUserLikeFilm(film);
                 addUserLikeFilm(film);
             }
         } else {
             throw new NotFoundException("Фильм с id " + filmId + " не найден.");
+        }
+    }
+
+    private void updateGenres(Film film) {
+       // List<Genre> listGenres = film.getGenres();
+        Set<Integer> newSetGenreIds = getGenreIds(film);
+        /*Set<Integer> newSetGenreIds = new HashSet<>();
+
+        for (Genre genre : listGenres) {
+            newSetGenreIds.add(genre.getId());
+        }*/
+        Set<Integer> oldSetGenreIds = findFilmsGenres(film.getId());
+
+        Set<Integer> saveNewSetGenreIds = newSetGenreIds;
+        Set<Integer> saveOldSetGenreIds = oldSetGenreIds;
+
+        oldSetGenreIds.removeAll(newSetGenreIds);
+        saveNewSetGenreIds.removeAll(saveOldSetGenreIds);
+
+        if (!oldSetGenreIds.isEmpty()) {
+            deleteGenresFromFilm(film.getId(), oldSetGenreIds);
+        }
+        if (!saveNewSetGenreIds.isEmpty()) {
+            addGenresToFilm(film, saveNewSetGenreIds);
+        }
+    }
+
+    /*private void addGenresToFilm(int filmId, Set<Integer> setGenreIds) {
+    }*/
+
+    private void deleteGenresFromFilm(int filmId, Set<Integer> genreIds) {
+        for (Integer genreId : genreIds) {
+            String sqlQuery = "delete from `film_genre` where film_id = ? and genre_id = ?";
+            if (jdbcTemplate.update(sqlQuery, filmId, genreId) > 0) {
+                log.info("Удалён жанр {} у фильма {}", genreId, filmId);
+            }
         }
     }
 
@@ -181,7 +230,7 @@ public class FilmDbStorage implements FilmStorage {
 
             return film;
         } else {
-            throw new NotFoundException("Пользователь с id " + filmId + " не найден.");
+            throw new NotFoundException("Фильм с id " + filmId + " не найден.");
         }
     }
 
@@ -206,6 +255,7 @@ public class FilmDbStorage implements FilmStorage {
 
         return listGenres;*/
     }
+
     private Genre mapRowToGenre(ResultSet resultSet, int rowNum) throws SQLException {
         int genreId = stringToInt(resultSet.getString("id"));
         String name = resultSet.getString("name");
@@ -246,10 +296,9 @@ public class FilmDbStorage implements FilmStorage {
                 log.info("Удалён лайк пользователя {} у фильма {}", userId, filmId);
             }
         }
-
     }
 
-    private void deleteFilmGenre(Film film) {
+    /*private void deleteFilmGenre(Film film) {
         int filmId = film.getId();
         Set<Integer> setGenres = new HashSet<>();
 
@@ -264,7 +313,7 @@ public class FilmDbStorage implements FilmStorage {
                 log.info("Удалён жанр {} у фильма {}", genreId, filmId);
             }
         }
-    }
+    }*/
 
     private boolean filmExists(int id) {
         String sqlQuery = "select count(*) from `film` where id = ?";
