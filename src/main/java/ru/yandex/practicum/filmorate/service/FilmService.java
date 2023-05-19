@@ -5,13 +5,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -86,7 +86,7 @@ public class FilmService {
         return filmStorage.findAllGenres();
     }
 
-    public Map.Entry<Integer, String> findGenreById(Integer genreId) {
+    public Genre findGenreById(Integer genreId) {
         return filmStorage.findGenreById(genreId);
     }
 

@@ -8,6 +8,7 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.sql.PreparedStatement;
@@ -305,12 +306,11 @@ public class FilmDbStorage implements FilmStorage {
         }
     }*/
     @Override
-    public Map.Entry<Integer, String> findGenreById(Integer genreId) {
-        SqlRowSet genreRows = jdbcTemplate.queryForRowSet("select id, name from `genre` where id = ?", genreId);
+    public Genre findGenreById(Integer genreId) {
+        SqlRowSet genreRows = jdbcTemplate.queryForRowSet("select name from `genre` where id = ?", genreId);
         if (genreRows.next()) {
-            int id = genreRows.getInt("id");
             String name = genreRows.getString("name");
-            Map.Entry<Integer, String> genre = new AbstractMap.SimpleEntry<Integer, String>(id, name);
+            Genre genre = new Genre(genreId, name);
             return genre;
         } else {
             throw new NotFoundException("Жанр с id " + genreId + " не найден.");

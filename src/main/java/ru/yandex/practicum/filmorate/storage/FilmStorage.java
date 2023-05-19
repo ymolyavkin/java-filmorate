@@ -1,9 +1,9 @@
 package ru.yandex.practicum.filmorate.storage;
 
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 
 import java.util.List;
-import java.util.Map;
 
 public interface FilmStorage {
     public List<Film> findAll();
@@ -18,7 +18,7 @@ public interface FilmStorage {
 
     public List<String> findAllGenres();
 
-    public Map.Entry<Integer, String> findGenreById(Integer genreId);
+    public Genre findGenreById(Integer genreId);
 
     public String createGenre(String genre);
 

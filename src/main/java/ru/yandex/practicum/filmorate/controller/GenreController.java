@@ -2,10 +2,10 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import java.util.List;
-import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -19,7 +19,7 @@ public class GenreController {
     }
 
     @GetMapping("{genreId}")
-    public Map.Entry<Integer, String> findGenreById(@PathVariable("genreId") Integer genreId) {
+    public Genre findGenreById(@PathVariable("genreId") Integer genreId) {
         return filmService.findGenreById(genreId);
     }
 
