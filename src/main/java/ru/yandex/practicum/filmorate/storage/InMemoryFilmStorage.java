@@ -51,7 +51,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public List<String> findAllGenres() {
+    public List<Genre> findAllGenres() {
         return null;
     }
 

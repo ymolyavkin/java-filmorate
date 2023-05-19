@@ -82,7 +82,7 @@ public class FilmService {
         return filmStorage.deleteFilmById(filmId);
     }
 
-    public List<String> findAllGenres() {
+    public List<Genre> findAllGenres() {
         return filmStorage.findAllGenres();
     }
 

@@ -14,7 +14,7 @@ public class GenreController {
     private final FilmService filmService;
 
     @GetMapping
-    public List<String> findAllGenres() {
+    public List<Genre> findAllGenres() {
         return filmService.findAllGenres();
     }
 

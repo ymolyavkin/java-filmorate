@@ -16,7 +16,7 @@ public interface FilmStorage {
 
     public int deleteFilmById(int filmId);
 
-    public List<String> findAllGenres();
+    public List<Genre> findAllGenres();
 
     public Genre findGenreById(Integer genreId);
 
