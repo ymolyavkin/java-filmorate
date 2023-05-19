@@ -19,7 +19,7 @@ public class GenreController {
     }
 
     @GetMapping("{genreId}")
-    public String findGenreById(@PathVariable("genreId") Integer genreId) {
+    public List<String> findGenreById(@PathVariable("genreId") Integer genreId) {
         return filmService.findGenreById(genreId);
     }
 

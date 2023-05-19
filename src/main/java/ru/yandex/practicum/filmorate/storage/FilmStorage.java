@@ -17,7 +17,7 @@ public interface FilmStorage {
 
     public List<String> findAllGenres();
 
-    public String findGenreById(Integer genreId);
+    public List<String> findGenreById(Integer genreId);
 
     public String createGenre(String genre);
 
