@@ -55,7 +55,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public List<String> findGenreById(Integer genreId) {
+    public Map.Entry<Integer, String> findGenreById(Integer genreId) {
         return null;
     }
 

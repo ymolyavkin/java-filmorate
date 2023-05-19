@@ -281,7 +281,7 @@ public class FilmDbStorage implements FilmStorage {
                 throw new NotFoundException("Пользователь с id " + filmId + " не найден.");
             }
      */
-   // @Override
+    // @Override
     /*public String findGenreById(Integer genreId) {
         var genreRows1 = jdbcTemplate.queryForRowSet("select name from `genre` where id = ?", genreId);
         SqlRowSet genreRows = jdbcTemplate.queryForRowSet("select name from `genre` where id = ?", genreId);
@@ -292,22 +292,37 @@ public class FilmDbStorage implements FilmStorage {
             throw new NotFoundException("Жанр с id " + genreId + " не найден.");
         }
     }*/
+    /*@Override
+    public Map.Entry<Integer, String> findGenreById(Integer genreId) {
+        SqlRowSet genreRows = jdbcTemplate.queryForRowSet("select id, name from `genre` where id = ?", genreId);
+        if (genreRows.next()) {
+            int id = genreRows.getInt("id");
+            String name = genreRows.getString("name");
+            Map.Entry<Integer, String> genre = new AbstractMap.SimpleEntry<Integer, String>(id, name);
+            return genre;
+        } else {
+            throw new NotFoundException("Жанр с id " + genreId + " не найден.");
+        }
+    }*/
     @Override
-    public List<String> findGenreById(Integer genreId) {
-        String sqlQuery = "select name from `genre` where id = ?";
-        List<String> listGenres = jdbcTemplate.queryForList(sqlQuery, String.class, genreId);
-        if (listGenres.size()>0){
-            return listGenres;
+    public Map.Entry<Integer, String> findGenreById(Integer genreId) {
+        SqlRowSet genreRows = jdbcTemplate.queryForRowSet("select id, name from `genre` where id = ?", genreId);
+        if (genreRows.next()) {
+            int id = genreRows.getInt("id");
+            String name = genreRows.getString("name");
+            Map.Entry<Integer, String> genre = new AbstractMap.SimpleEntry<Integer, String>(id, name);
+            return genre;
         } else {
             throw new NotFoundException("Жанр с id " + genreId + " не найден.");
         }
     }
-/*
-List<String> listGenres = jdbcTemplate.queryForList(sqlQuery, String.class, genreId);
-List<String> listGenres = jdbcTemplate.queryForList(sqlQuery, String.class);
 
-        return listGenres;
- */
+    /*
+    List<String> listGenres = jdbcTemplate.queryForList(sqlQuery, String.class, genreId);
+    List<String> listGenres = jdbcTemplate.queryForList(sqlQuery, String.class);
+
+            return listGenres;
+     */
     @Override
     public String createGenre(String genre) {
         return null;

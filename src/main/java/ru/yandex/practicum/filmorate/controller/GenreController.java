@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
-import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -19,7 +19,7 @@ public class GenreController {
     }
 
     @GetMapping("{genreId}")
-    public List<String> findGenreById(@PathVariable("genreId") Integer genreId) {
+    public Map.Entry<Integer, String> findGenreById(@PathVariable("genreId") Integer genreId) {
         return filmService.findGenreById(genreId);
     }
 

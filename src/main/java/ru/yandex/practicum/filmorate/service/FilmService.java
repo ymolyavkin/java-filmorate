@@ -11,6 +11,7 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -85,7 +86,7 @@ public class FilmService {
         return filmStorage.findAllGenres();
     }
 
-    public List<String> findGenreById(Integer genreId) {
+    public Map.Entry<Integer, String> findGenreById(Integer genreId) {
         return filmStorage.findGenreById(genreId);
     }
 
