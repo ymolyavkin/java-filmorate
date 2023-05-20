@@ -48,7 +48,7 @@ public class FilmDbStorage implements FilmStorage {
         Mpa mpa = new Mpa(mpaId, rating);
 
         List<Genre> filmGenres = new ArrayList<>();
-        Set<Integer> genresIds = findFilmsGenreIds(filmId);
+        Set<Integer> genresIds = findFilmsGenreIdsFromDb(filmId);
         for (Integer genreId : genresIds) {
             filmGenres.add(findGenreById(genreId));
         }
@@ -71,7 +71,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public int addFilm(Film film) {
+    public Film addFilm(Film film) {
         String sqlQuery = "insert into `film`(name, description, release, duration, mpa_id) values (?, ?, ?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
@@ -91,8 +91,11 @@ public class FilmDbStorage implements FilmStorage {
         if (!film.getLikes().isEmpty()) {
             addUserLikeFilm(film);
         }
+        String sqlQueryFilm = "select * from `film` where id = ?";
+        List<Film> result = jdbcTemplate.query(sqlQueryFilm, this::mapRowToFilm, film.getId());
 
-        return keyHolder.getKey().intValue();
+        return result.get(0);
+        //return keyHolder.getKey().intValue();
     }
 
     private Set<Integer> getGenreIdsFromFilm(Film film) {
@@ -114,6 +117,16 @@ public class FilmDbStorage implements FilmStorage {
         }
     }
 
+    private void addLikesToFilm(Film film, Set<Integer> userIds) {
+        int filmId = film.getId();
+
+        for (int userId : userIds) {
+            String sqlQuery = "insert into `user_likefilm`(user_id, film_id) values (?, ?)";
+            jdbcTemplate.update(sqlQuery, userId, filmId);
+            log.info("Пользователь с id {} поставил лайк фильму с id {}.", userId, filmId);
+        }
+    }
+
     private void addUserLikeFilm(Film film) {
         int filmId = film.getId();
         Set<Integer> likes = film.getLikes();
@@ -124,7 +137,7 @@ public class FilmDbStorage implements FilmStorage {
         }
     }
 
-    private Set<Integer> findFilmsGenreIds(int filmId) {
+    private Set<Integer> findFilmsGenreIdsFromDb(int filmId) {
         if (filmExists(filmId)) {
             String sqlQuery = "select genre_id from `film_genre` where film_id = ?";
             List<Integer> listGenres = jdbcTemplate.queryForList(sqlQuery, Integer.class, filmId);
@@ -137,7 +150,7 @@ public class FilmDbStorage implements FilmStorage {
 
 
     @Override
-    public void updateFilm(Film film) {
+    public Film updateFilm(Film film) {
         int filmId = film.getId();
         SqlRowSet filmRows = jdbcTemplate.queryForRowSet("select * from `film` where id = ?", filmId);
         if (filmRows.next()) {
@@ -151,20 +164,26 @@ public class FilmDbStorage implements FilmStorage {
                     film.getMpaId(),
                     film.getId());
 
-            updateGenres(film);
-
+            if (film.getGenres() != null) {
+                updateGenres(film);
+            }
             if (!film.getLikes().isEmpty()) {
+                updateLikes(film);
+            }
+
+            /*if (!film.getLikes().isEmpty()) {
                 deleteUserLikeFilm(film);
                 addUserLikeFilm(film);
-            }
+            }*/
         } else {
             throw new NotFoundException("Фильм с id " + filmId + " не найден.");
         }
+        return film;
     }
 
     private void updateGenres(Film film) {
         Set<Integer> newSetGenreIds = getGenreIdsFromFilm(film);
-        Set<Integer> oldSetGenreIds = findFilmsGenreIds(film.getId());
+        Set<Integer> oldSetGenreIds = findFilmsGenreIdsFromDb(film.getId());
 
         Set<Integer> saveNewSetGenreIds = newSetGenreIds;
         Set<Integer> saveOldSetGenreIds = oldSetGenreIds;
@@ -180,11 +199,49 @@ public class FilmDbStorage implements FilmStorage {
         }
     }
 
+    private void updateLikes(Film film) {
+        Set<Integer> newSetLikeIds = film.getLikes();
+        Set<Integer> oldSetLikeIds = findFilmsLikeIdsFromDb(film.getId());
+
+        Set<Integer> saveNewSetLikeIds = newSetLikeIds;
+        Set<Integer> saveOldSetLikeIds = oldSetLikeIds;
+
+        oldSetLikeIds.removeAll(newSetLikeIds);
+        saveNewSetLikeIds.removeAll(saveOldSetLikeIds);
+
+        if (!oldSetLikeIds.isEmpty()) {
+            deleteLikesFromFilm(film.getId(), oldSetLikeIds);
+        }
+        if (!saveNewSetLikeIds.isEmpty()) {
+            addLikesToFilm(film, saveNewSetLikeIds);
+        }
+    }
+
+    private Set<Integer> findFilmsLikeIdsFromDb(int filmId) {
+        if (filmExists(filmId)) {
+            String sqlQuery = "select user_id from `user_likefilm` where film_id = ?";
+            List<Integer> listLikes = jdbcTemplate.queryForList(sqlQuery, Integer.class, filmId);
+
+            return new HashSet<Integer>(listLikes);
+        } else {
+            throw new NotFoundException("Фильм с id " + filmId + " не найден.");
+        }
+    }
+
     private void deleteGenresFromFilm(int filmId, Set<Integer> genreIds) {
-        for (Integer genreId : genreIds) {
+        for (int genreId : genreIds) {
             String sqlQuery = "delete from `film_genre` where film_id = ? and genre_id = ?";
             if (jdbcTemplate.update(sqlQuery, filmId, genreId) > 0) {
                 log.info("Удалён жанр {} у фильма {}", genreId, filmId);
+            }
+        }
+    }
+
+    private void deleteLikesFromFilm(int filmId, Set<Integer> userIds) {
+        for (int userId : userIds) {
+            String sqlQuery = "delete from `user_likefilm` where film_id = ? and user_id = ?";
+            if (jdbcTemplate.update(sqlQuery, filmId, userId) > 0) {
+                log.info("Удалён лайк пользователя {} у фильма {}", userId, filmId);
             }
         }
     }
@@ -239,7 +296,7 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public int deleteFilmById(int filmId) {
-        deleteGenresFromFilm(filmId, findFilmsGenreIds(filmId));
+        deleteGenresFromFilm(filmId, findFilmsGenreIdsFromDb(filmId));
         String sqlQuery = "delete from `film` where id = ?";
 
         if (jdbcTemplate.update(sqlQuery, filmId) > 0) {

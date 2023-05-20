@@ -21,17 +21,18 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public int addFilm(Film film) {
+    public Film addFilm(Film film) {
         films.put(film.getId(), film);
-        return film.getId();
+        return film;
     }
 
     @Override
-    public void updateFilm(Film film) {
+    public Film updateFilm(Film film) {
         if (!films.containsKey(film.getId())) {
             throw new NotFoundException("Фильм с id " + film.getId() + " не найден.");
         }
         films.put(film.getId(), film);
+        return film;
     }
 
     @Override

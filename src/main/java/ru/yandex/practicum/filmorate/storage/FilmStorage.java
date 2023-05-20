@@ -9,9 +9,9 @@ import java.util.List;
 public interface FilmStorage {
     public List<Film> findAll();
 
-    public int addFilm(Film film);
+    public Film addFilm(Film film);
 
-    public void updateFilm(Film film);
+    public Film updateFilm(Film film);
 
     public Film findFilmById(int filmId);
 

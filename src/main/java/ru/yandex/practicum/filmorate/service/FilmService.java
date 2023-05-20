@@ -32,15 +32,17 @@ public class FilmService {
 
     public Film create(@RequestBody Film film) {
         film.setId(generationId());
-        filmStorage.addFilm(film);
+        /*filmStorage.addFilm(film);
 
-        return film;
+        return film;*/
+        return filmStorage.addFilm(film);
     }
 
     public Film put(@RequestBody Film film) {
-        filmStorage.updateFilm(film);
+        /*filmStorage.updateFilm(film);
 
-        return film;
+        return film;*/
+        return filmStorage.updateFilm(film);
     }
 
     public List<Film> findAll() {
