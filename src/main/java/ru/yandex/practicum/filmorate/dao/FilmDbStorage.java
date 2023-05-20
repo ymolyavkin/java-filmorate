@@ -178,7 +178,11 @@ public class FilmDbStorage implements FilmStorage {
         } else {
             throw new NotFoundException("Фильм с id " + filmId + " не найден.");
         }
-        return film;
+        String sqlQueryFilm = "select * from `film` where id = ?";
+        List<Film> result = jdbcTemplate.query(sqlQueryFilm, this::mapRowToFilm, filmId);
+
+        return result.get(0);
+        //return film;
     }
 
     private void updateGenres(Film film) {
