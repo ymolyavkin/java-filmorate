@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
@@ -90,11 +91,11 @@ public class FilmService {
         return filmStorage.findGenreById(genreId);
     }
 
-    public String findMpaById(Integer mpaId) {
+    public Mpa findMpaById(Integer mpaId) {
         return filmStorage.findMpaById(mpaId);
     }
 
-    public List<String> findAllMpa() {
+    public List<Mpa> findAllMpa() {
         return filmStorage.findAllMpa();
     }
 }

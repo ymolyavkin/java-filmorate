@@ -47,8 +47,7 @@ public class FilmDbStorage implements FilmStorage {
         String rating = findNameMpaById(mpaId);
         Mpa mpa = new Mpa(mpaId, rating);
 
-       List<Genre> filmGenres = new ArrayList<>();
-       // List<Genre> filmGenres = findAllGenresFilm(filmId);
+        List<Genre> filmGenres = new ArrayList<>();
         Set<Integer> genresIds = findFilmsGenreIds(filmId);
         for (Integer genreId : genresIds) {
             filmGenres.add(findGenreById(genreId));
@@ -154,11 +153,6 @@ public class FilmDbStorage implements FilmStorage {
 
             updateGenres(film);
 
-
-            /*if (film.getGenres() != null) {
-                deleteFilmGenre(film);
-                addFilmGenre(film);
-            }*/
             if (!film.getLikes().isEmpty()) {
                 deleteUserLikeFilm(film);
                 addUserLikeFilm(film);
@@ -169,13 +163,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     private void updateGenres(Film film) {
-        // List<Genre> listGenres = film.getGenres();
         Set<Integer> newSetGenreIds = getGenreIdsFromFilm(film);
-        /*Set<Integer> newSetGenreIds = new HashSet<>();
-
-        for (Genre genre : listGenres) {
-            newSetGenreIds.add(genre.getId());
-        }*/
         Set<Integer> oldSetGenreIds = findFilmsGenreIds(film.getId());
 
         Set<Integer> saveNewSetGenreIds = newSetGenreIds;
@@ -192,9 +180,6 @@ public class FilmDbStorage implements FilmStorage {
         }
     }
 
-    /*private void addGenresToFilm(int filmId, Set<Integer> setGenreIds) {
-    }*/
-
     private void deleteGenresFromFilm(int filmId, Set<Integer> genreIds) {
         for (Integer genreId : genreIds) {
             String sqlQuery = "delete from `film_genre` where film_id = ? and genre_id = ?";
@@ -204,14 +189,14 @@ public class FilmDbStorage implements FilmStorage {
         }
     }
 
-   @Override
+    @Override
     public Film findFilmById(int filmId) {
         String sqlQuery = "select * from `film` where id = ?";
         var result = jdbcTemplate.query(sqlQuery, this::mapRowToFilm, filmId);
         return result.get(0);
     }
 
-   // @Override
+    // @Override
     public Film findFilmByIdOld(int filmId) {
         SqlRowSet filmRows = jdbcTemplate.queryForRowSet("select id, name, description, release,  duration, mpa_id from `film` where id = ?", filmId);
         if (filmRows.next()) {
@@ -251,6 +236,7 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public int deleteFilmById(int filmId) {
+        deleteGenresFromFilm(filmId, findFilmsGenreIds(filmId));
         String sqlQuery = "delete from `film` where id = ?";
 
         if (jdbcTemplate.update(sqlQuery, filmId) > 0) {
@@ -265,10 +251,6 @@ public class FilmDbStorage implements FilmStorage {
     public List<Genre> findAllGenres() {
         String sqlQuery = "select id, name from `genre`";
         return jdbcTemplate.query(sqlQuery, this::mapRowToGenre);
-        /*String sqlQuery = "select name from `genre`";
-        List<String> listGenres = jdbcTemplate.queryForList(sqlQuery, String.class);
-
-        return listGenres;*/
     }
 
     private Genre mapRowToGenre(ResultSet resultSet, int rowNum) throws SQLException {
@@ -293,13 +275,29 @@ public class FilmDbStorage implements FilmStorage {
 
 
     @Override
-    public String findMpaById(Integer mpaId) {
-        return null;
+    public Mpa findMpaById(Integer mpaId) {
+        SqlRowSet mpaRows = jdbcTemplate.queryForRowSet("select name from `mpa` where id = ?", mpaId);
+        if (mpaRows.next()) {
+            String name = mpaRows.getString("name");
+            Mpa mpa = new Mpa(mpaId, name);
+            return mpa;
+        } else {
+            throw new NotFoundException("Жанр с id " + mpaId + " не найден.");
+        }
     }
 
     @Override
-    public List<String> findAllMpa() {
-        return null;
+    public List<Mpa> findAllMpa() {
+        String sqlQuery = "select id, name from `mpa`";
+        return jdbcTemplate.query(sqlQuery, this::mapRowToMpa);
+    }
+
+    private Mpa mapRowToMpa(ResultSet resultSet, int rowNum) throws SQLException {
+        int mpaId = stringToInt(resultSet.getString("id"));
+        String name = resultSet.getString("name");
+
+        Mpa mpa = new Mpa(mpaId, name);
+        return mpa;
     }
 
     private void deleteUserLikeFilm(Film film) {
@@ -344,7 +342,6 @@ public class FilmDbStorage implements FilmStorage {
             log.info("Найден жанр: {} {}", genreRows.getString("id"), genreRows.getString("name"));
         } else {
             log.info("Жанр не найден");
-
         }
     }
 

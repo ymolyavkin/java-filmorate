@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import java.util.List;
@@ -12,12 +13,12 @@ public class MpaController {
     private final FilmService filmService;
 
     @GetMapping
-    public List<String> findAllMpa() {
+    public List<Mpa> findAllMpa() {
         return filmService.findAllMpa();
     }
 
     @GetMapping("{mpaId}")
-    public String findmpaById(@PathVariable("mpaId") Integer mpaId) {
+    public Mpa findmpaById(@PathVariable("mpaId") Integer mpaId) {
         return filmService.findMpaById(mpaId);
     }
 }

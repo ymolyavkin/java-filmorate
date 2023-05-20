@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.storage;
 
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.Mpa;
 
 import java.util.List;
 
@@ -20,7 +21,7 @@ public interface FilmStorage {
 
     public Genre findGenreById(Integer genreId);
 
-    public String findMpaById(Integer mpaId);
+    public Mpa findMpaById(Integer mpaId);
 
-    public List<String> findAllMpa();
+    public List<Mpa> findAllMpa();
 }

@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.Mpa;
 
 import java.util.HashMap;
 import java.util.List;
@@ -61,12 +62,12 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public String findMpaById(Integer mpaId) {
+    public Mpa findMpaById(Integer mpaId) {
         return null;
     }
 
     @Override
-    public List<String> findAllMpa() {
+    public List<Mpa> findAllMpa() {
         return null;
     }
 }
