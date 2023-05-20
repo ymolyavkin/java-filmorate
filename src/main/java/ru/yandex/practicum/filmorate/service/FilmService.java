@@ -87,11 +87,11 @@ public class FilmService {
         return filmStorage.findAllGenres();
     }
 
-    public Genre findGenreById(Integer genreId) {
+    public Genre findGenreById(int genreId) {
         return filmStorage.findGenreById(genreId);
     }
 
-    public Mpa findMpaById(Integer mpaId) {
+    public Mpa findMpaById(int mpaId) {
         return filmStorage.findMpaById(mpaId);
     }
 

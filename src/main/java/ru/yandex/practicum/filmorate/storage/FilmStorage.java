@@ -19,9 +19,9 @@ public interface FilmStorage {
 
     public List<Genre> findAllGenres();
 
-    public Genre findGenreById(Integer genreId);
+    public Genre findGenreById(int genreId);
 
-    public Mpa findMpaById(Integer mpaId);
+    public Mpa findMpaById(int mpaId);
 
     public List<Mpa> findAllMpa();
 }

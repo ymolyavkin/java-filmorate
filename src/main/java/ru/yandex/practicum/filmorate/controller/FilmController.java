@@ -26,7 +26,7 @@ public class FilmController {
     }
 
     @GetMapping("{filmId}")
-    public Film findFilmById(@PathVariable("filmId") Integer filmId) {
+    public Film findFilmById(@PathVariable("filmId") int filmId) {
         return filmService.findFilmById(filmId);
     }
 

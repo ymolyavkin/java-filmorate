@@ -59,7 +59,7 @@ public class FilmDbStorage implements FilmStorage {
         return film;
     }
 
-    private String findNameMpaById(Integer mpaId) {
+    private String findNameMpaById(int mpaId) {
         SqlRowSet genreRows = jdbcTemplate.queryForRowSet("select name from `mpa` where id = ?", mpaId);
         if (genreRows.next()) {
             String name = genreRows.getString("name");
@@ -192,7 +192,10 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public Film findFilmById(int filmId) {
         String sqlQuery = "select * from `film` where id = ?";
-        var result = jdbcTemplate.query(sqlQuery, this::mapRowToFilm, filmId);
+        List<Film> result = jdbcTemplate.query(sqlQuery, this::mapRowToFilm, filmId);
+        if (result.size() < 1) {
+            throw new NotFoundException("Фильм с id " + filmId + " не найден.");
+        }
         return result.get(0);
     }
 
@@ -262,7 +265,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public Genre findGenreById(Integer genreId) {
+    public Genre findGenreById(int genreId) {
         SqlRowSet genreRows = jdbcTemplate.queryForRowSet("select name from `genre` where id = ?", genreId);
         if (genreRows.next()) {
             String name = genreRows.getString("name");
@@ -275,7 +278,7 @@ public class FilmDbStorage implements FilmStorage {
 
 
     @Override
-    public Mpa findMpaById(Integer mpaId) {
+    public Mpa findMpaById(int mpaId) {
         SqlRowSet mpaRows = jdbcTemplate.queryForRowSet("select name from `mpa` where id = ?", mpaId);
         if (mpaRows.next()) {
             String name = mpaRows.getString("name");

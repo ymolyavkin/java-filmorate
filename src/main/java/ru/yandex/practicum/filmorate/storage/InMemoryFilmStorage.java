@@ -57,12 +57,12 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Genre findGenreById(Integer genreId) {
+    public Genre findGenreById(int genreId) {
         return null;
     }
 
     @Override
-    public Mpa findMpaById(Integer mpaId) {
+    public Mpa findMpaById(int mpaId) {
         return null;
     }
 
