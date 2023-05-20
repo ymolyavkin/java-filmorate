@@ -47,8 +47,9 @@ public class FilmDbStorage implements FilmStorage {
         String rating = findNameMpaById(mpaId);
         Mpa mpa = new Mpa(mpaId, rating);
 
-        List<Genre> filmGenres = new ArrayList<>();
-        Set<Integer> genresIds = findFilmsGenres(filmId);
+       List<Genre> filmGenres = new ArrayList<>();
+       // List<Genre> filmGenres = findAllGenresFilm(filmId);
+        Set<Integer> genresIds = findFilmsGenreIds(filmId);
         for (Integer genreId : genresIds) {
             filmGenres.add(findGenreById(genreId));
         }
@@ -85,7 +86,7 @@ public class FilmDbStorage implements FilmStorage {
         }, keyHolder);
 
         if (film.getGenres() != null) {
-            Set genreIds = getGenreIds(film);
+            Set genreIds = getGenreIdsFromFilm(film);
             addGenresToFilm(film, genreIds);
         }
         if (!film.getLikes().isEmpty()) {
@@ -95,7 +96,7 @@ public class FilmDbStorage implements FilmStorage {
         return keyHolder.getKey().intValue();
     }
 
-    private Set getGenreIds(Film film) {
+    private Set<Integer> getGenreIdsFromFilm(Film film) {
         Set<Integer> genreIds = new HashSet<>();
         List<Genre> genres = film.getGenres();
         for (Genre genre : genres) {
@@ -124,7 +125,7 @@ public class FilmDbStorage implements FilmStorage {
         }
     }
 
-    private Set<Integer> findFilmsGenres(int filmId) {
+    private Set<Integer> findFilmsGenreIds(int filmId) {
         if (filmExists(filmId)) {
             String sqlQuery = "select genre_id from `film_genre` where film_id = ?";
             List<Integer> listGenres = jdbcTemplate.queryForList(sqlQuery, Integer.class, filmId);
@@ -134,6 +135,7 @@ public class FilmDbStorage implements FilmStorage {
             throw new NotFoundException("Фильм с id " + filmId + " не найден.");
         }
     }
+
 
     @Override
     public void updateFilm(Film film) {
@@ -167,14 +169,14 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     private void updateGenres(Film film) {
-       // List<Genre> listGenres = film.getGenres();
-        Set<Integer> newSetGenreIds = getGenreIds(film);
+        // List<Genre> listGenres = film.getGenres();
+        Set<Integer> newSetGenreIds = getGenreIdsFromFilm(film);
         /*Set<Integer> newSetGenreIds = new HashSet<>();
 
         for (Genre genre : listGenres) {
             newSetGenreIds.add(genre.getId());
         }*/
-        Set<Integer> oldSetGenreIds = findFilmsGenres(film.getId());
+        Set<Integer> oldSetGenreIds = findFilmsGenreIds(film.getId());
 
         Set<Integer> saveNewSetGenreIds = newSetGenreIds;
         Set<Integer> saveOldSetGenreIds = oldSetGenreIds;
@@ -202,9 +204,16 @@ public class FilmDbStorage implements FilmStorage {
         }
     }
 
-    @Override
+   @Override
     public Film findFilmById(int filmId) {
-        SqlRowSet filmRows = jdbcTemplate.queryForRowSet("select * from `film` where id = ?", filmId);
+        String sqlQuery = "select * from `film` where id = ?";
+        var result = jdbcTemplate.query(sqlQuery, this::mapRowToFilm, filmId);
+        return result.get(0);
+    }
+
+   // @Override
+    public Film findFilmByIdOld(int filmId) {
+        SqlRowSet filmRows = jdbcTemplate.queryForRowSet("select id, name, description, release,  duration, mpa_id from `film` where id = ?", filmId);
         if (filmRows.next()) {
             String name = filmRows.getString("name");
             String description = filmRows.getString("description");
@@ -215,15 +224,16 @@ public class FilmDbStorage implements FilmStorage {
             Mpa mpa = new Mpa(mpaId, rating);
             //Map.Entry<String, Integer> mpa_entry = new AbstractMap.SimpleEntry<String, Integer>("id", mpa_id);
             //List<Map.Entry<String, Integer>> genres = new ArrayList<>();
-            List<Genre> filmGenres = new ArrayList<>();
+            //List<Genre> filmGenres = new ArrayList<>();
+            List<Genre> filmGenres = findAllGenresFilm(filmId);
 
-            SqlRowSet genreRows = jdbcTemplate.queryForRowSet("select genre_id from `film_genre` where film_id = ?", filmId);
+           /* SqlRowSet genreRows = jdbcTemplate.queryForRowSet("select genre_id from `film_genre` where film_id = ?", filmId);
             if (genreRows.next()) {
                 int idGenre = genreRows.getInt("genre_id");
                 filmGenres.add(findGenreById(idGenre));
                 //Map.Entry<String, Integer> genre = new AbstractMap.SimpleEntry<String, Integer>("id", idGenre);
                 //genres.add(genre);
-            }
+            }*/
 
             Film film = new Film(name, description, release, duration, mpa, filmGenres);
             film.setId(filmId);
@@ -232,6 +242,11 @@ public class FilmDbStorage implements FilmStorage {
         } else {
             throw new NotFoundException("Фильм с id " + filmId + " не найден.");
         }
+    }
+
+    private List<Genre> findAllGenresFilm(int filmId) {
+        String sqlQuery = "select * from `film_genre` where film_id = ?";
+        return jdbcTemplate.query(sqlQuery, this::mapRowToGenre, filmId);
     }
 
     @Override
