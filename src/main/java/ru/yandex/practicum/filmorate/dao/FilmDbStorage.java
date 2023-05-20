@@ -95,7 +95,6 @@ public class FilmDbStorage implements FilmStorage {
         List<Film> result = jdbcTemplate.query(sqlQueryFilm, this::mapRowToFilm, film.getId());
 
         return result.get(0);
-        //return keyHolder.getKey().intValue();
     }
 
     private Set<Integer> getGenreIdsFromFilm(Film film) {
@@ -152,7 +151,8 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public Film updateFilm(Film film) {
         int filmId = film.getId();
-        SqlRowSet filmRows = jdbcTemplate.queryForRowSet("select * from `film` where id = ?", filmId);
+        String sqlQueryFilm = "select * from `film` where id = ?";
+        SqlRowSet filmRows = jdbcTemplate.queryForRowSet(sqlQueryFilm, filmId);
         if (filmRows.next()) {
             String sqlQuery = "update `film` set name = ?, description = ?, release = ?, duration = ?, mpa_id = ? where id = ?";
 
@@ -170,19 +170,12 @@ public class FilmDbStorage implements FilmStorage {
             if (!film.getLikes().isEmpty()) {
                 updateLikes(film);
             }
-
-            /*if (!film.getLikes().isEmpty()) {
-                deleteUserLikeFilm(film);
-                addUserLikeFilm(film);
-            }*/
         } else {
             throw new NotFoundException("Фильм с id " + filmId + " не найден.");
         }
-        String sqlQueryFilm = "select * from `film` where id = ?";
         List<Film> result = jdbcTemplate.query(sqlQueryFilm, this::mapRowToFilm, filmId);
 
         return result.get(0);
-        //return film;
     }
 
     private void updateGenres(Film film) {
@@ -260,47 +253,10 @@ public class FilmDbStorage implements FilmStorage {
         return result.get(0);
     }
 
-    // @Override
-    public Film findFilmByIdOld(int filmId) {
-        SqlRowSet filmRows = jdbcTemplate.queryForRowSet("select id, name, description, release,  duration, mpa_id from `film` where id = ?", filmId);
-        if (filmRows.next()) {
-            String name = filmRows.getString("name");
-            String description = filmRows.getString("description");
-            LocalDate release = LocalDate.parse(filmRows.getString("release"), formatter);
-            int duration = filmRows.getInt("duration");
-            int mpaId = filmRows.getInt("mpa_id");
-            String rating = findNameMpaById(mpaId);
-            Mpa mpa = new Mpa(mpaId, rating);
-            //Map.Entry<String, Integer> mpa_entry = new AbstractMap.SimpleEntry<String, Integer>("id", mpa_id);
-            //List<Map.Entry<String, Integer>> genres = new ArrayList<>();
-            //List<Genre> filmGenres = new ArrayList<>();
-            List<Genre> filmGenres = findAllGenresFilm(filmId);
-
-           /* SqlRowSet genreRows = jdbcTemplate.queryForRowSet("select genre_id from `film_genre` where film_id = ?", filmId);
-            if (genreRows.next()) {
-                int idGenre = genreRows.getInt("genre_id");
-                filmGenres.add(findGenreById(idGenre));
-                //Map.Entry<String, Integer> genre = new AbstractMap.SimpleEntry<String, Integer>("id", idGenre);
-                //genres.add(genre);
-            }*/
-
-            Film film = new Film(name, description, release, duration, mpa, filmGenres);
-            film.setId(filmId);
-
-            return film;
-        } else {
-            throw new NotFoundException("Фильм с id " + filmId + " не найден.");
-        }
-    }
-
-    private List<Genre> findAllGenresFilm(int filmId) {
-        String sqlQuery = "select * from `film_genre` where film_id = ?";
-        return jdbcTemplate.query(sqlQuery, this::mapRowToGenre, filmId);
-    }
-
     @Override
     public int deleteFilmById(int filmId) {
         deleteGenresFromFilm(filmId, findFilmsGenreIdsFromDb(filmId));
+        deleteLikesFromFilm(filmId, findFilmsLikeIdsFromDb(filmId));
         String sqlQuery = "delete from `film` where id = ?";
 
         if (jdbcTemplate.update(sqlQuery, filmId) > 0) {
@@ -375,11 +331,10 @@ public class FilmDbStorage implements FilmStorage {
         }
     }
 
-    /*private void deleteFilmGenre(Film film) {
+    private void deleteFilmGenre(Film film) {
         int filmId = film.getId();
         Set<Integer> setGenres = new HashSet<>();
 
-        //List<Map.Entry<String, Integer>> mapsGenres = film.getGenres();
         List<Genre> mapsGenres = film.getGenres();
         for (Genre genre : mapsGenres) {
             setGenres.add(genre.getId());
@@ -390,7 +345,7 @@ public class FilmDbStorage implements FilmStorage {
                 log.info("Удалён жанр {} у фильма {}", genreId, filmId);
             }
         }
-    }*/
+    }
 
     private boolean filmExists(int id) {
         String sqlQuery = "select count(*) from `film` where id = ?";
@@ -399,14 +354,4 @@ public class FilmDbStorage implements FilmStorage {
 
         return result == 1;
     }
-
-    private void selectAllGenres() {
-        SqlRowSet genreRows = jdbcTemplate.queryForRowSet("select * from genre");
-        if (genreRows.next()) {
-            log.info("Найден жанр: {} {}", genreRows.getString("id"), genreRows.getString("name"));
-        } else {
-            log.info("Жанр не найден");
-        }
-    }
-
 }
