@@ -29,12 +29,6 @@ class FilmControllerTest {
     private ObjectMapper objectMapper;
 
     private Film createTestFilm() {
-       /* Map.Entry<String, Integer> ratingMpa =
-                new AbstractMap.SimpleEntry<String, Integer>("id", 1);*/
-        /*Map.Entry<String, Integer> genreOne =
-                new AbstractMap.SimpleEntry<String, Integer>("id", 1);
-        Map.Entry<String, Integer> genreTwo =
-                new AbstractMap.SimpleEntry<String, Integer>("id", 2);*/
         Mpa ratingMpa = new Mpa(1, "G");
         Genre genreOne = new Genre(1, "Drama");
         Genre genreTwo = new Genre(2, "Komedy");
@@ -47,11 +41,6 @@ class FilmControllerTest {
     }
 
     private Film createTestFilmWithId9999() {
-        /*Map.Entry<String, Integer> ratingMpa =
-                new AbstractMap.SimpleEntry<String, Integer>("id", 1);*/
-       /* Map.Entry<String, Integer> genreOne = new AbstractMap.SimpleEntry<String, Integer>("id", 1);
-        Map.Entry<String, Integer> genreTwo = new AbstractMap.SimpleEntry<String, Integer>("id", 2);
-*/
         Mpa ratingMpa = new Mpa(1, "G");
         Genre genreOne = new Genre(1, "Drama");
         Genre genreTwo = new Genre(2, "Komedy");
@@ -94,7 +83,6 @@ class FilmControllerTest {
 
     @Test
     public void givenEmptyWhenGetFilmsThenStatus200() throws Exception {
-
         mockMvc.perform(
                         get("/films"))
                 .andExpect(status().isOk());
