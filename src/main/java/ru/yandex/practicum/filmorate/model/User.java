@@ -23,7 +23,6 @@ public class User {
     @Birthday
     private final LocalDate birthday;
     private Set<Integer> friends;
-    //private Map<Integer, Boolean> friends;
 
     public User(String name, String email, String login, LocalDate birthday) {
         this.name = name;

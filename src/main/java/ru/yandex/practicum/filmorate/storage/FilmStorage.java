@@ -25,5 +25,5 @@ public interface FilmStorage {
 
     public List<Mpa> findAllMpa();
 
-    List<Film> findPopularFilms(int count);
+    public List<Film> findPopularFilms(int count);
 }

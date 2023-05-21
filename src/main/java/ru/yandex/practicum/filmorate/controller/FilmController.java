@@ -32,7 +32,6 @@ public class FilmController {
     @PutMapping
     public Film put(@Valid @RequestBody Film film) {
         return filmService.put(film);
-        // return film;
     }
 
     @GetMapping("popular")

@@ -11,9 +11,8 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 @RequiredArgsConstructor
 @Service
@@ -23,8 +22,6 @@ public class FilmService {
     private final FilmStorage filmStorage;
     @Qualifier("userDbStorage")
     private final UserStorage userStorage;
-    //  private final UserStorage userDaoStorage;
-    // private final FilmStorage filmDaoStorage;
 
     private int generationId() {
         return ++id;
@@ -32,16 +29,11 @@ public class FilmService {
 
     public Film create(@RequestBody Film film) {
         film.setId(generationId());
-        /*filmStorage.addFilm(film);
 
-        return film;*/
         return filmStorage.addFilm(film);
     }
 
     public Film put(@RequestBody Film film) {
-        /*filmStorage.updateFilm(film);
-
-        return film;*/
         return filmStorage.updateFilm(film);
     }
 
@@ -54,11 +46,6 @@ public class FilmService {
     }
 
     public List<Film> findPopularFilms(int count) {
-        /*List<Film> allFilms = filmStorage.findAll();
-        return allFilms.stream()
-                .sorted(Collections.reverseOrder())
-                .limit(count)
-                .collect(Collectors.toList());*/
         return filmStorage.findPopularFilms(count);
     }
 

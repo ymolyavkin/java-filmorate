@@ -23,20 +23,10 @@ public class Film implements Comparable<Film> {
     private final LocalDate releaseDate;
     @Positive(message = "Продолжительность фильма должна быть положительной.")
     private final int duration;
-    //private final Map<String, Integer> mpa;
-    //private final List<Map<String, Integer>> genres;
     private Set<Integer> likes;
-   // private final Map.Entry<String, Integer> mpa;
     private final Mpa mpa;
     private final List<Genre> genres;
-   // private final List<Map.Entry<String, Integer>> genres;
-/*
-Map.Entry<String,Integer> entry =
-    new AbstractMap.SimpleEntry<String, Integer>("exmpleString", 42);
- */
 
-    /*public Film(String name, String description, LocalDate releaseDate, int duration, Map<String,
-            Integer> mpa, List<Map<String, Integer>> genres) {*/
     public Film(String name, String description, LocalDate releaseDate, int duration,
                 Mpa mpa, List<Genre> genres) {
         this.name = name;
@@ -60,6 +50,7 @@ Map.Entry<String,Integer> entry =
     public int hashCode() {
         return Objects.hash(id, name);
     }
+
     @JsonIgnore
     public int getMpaId() {
         return mpa.getId();
