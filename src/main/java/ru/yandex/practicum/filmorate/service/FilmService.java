@@ -54,11 +54,12 @@ public class FilmService {
     }
 
     public List<Film> findPopularFilms(int count) {
-        List<Film> allFilms = filmStorage.findAll();
+        /*List<Film> allFilms = filmStorage.findAll();
         return allFilms.stream()
                 .sorted(Collections.reverseOrder())
                 .limit(count)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList());*/
+        return filmStorage.findPopularFilms(count);
     }
 
     public int likeFilm(int filmId, int userId) {

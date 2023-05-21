@@ -24,4 +24,6 @@ public interface FilmStorage {
     public Mpa findMpaById(int mpaId);
 
     public List<Mpa> findAllMpa();
+
+    List<Film> findPopularFilms(int count);
 }

@@ -52,10 +52,12 @@ public class FilmDbStorage implements FilmStorage {
         for (Integer genreId : genresIds) {
             filmGenres.add(findGenreById(genreId));
         }
+        Set<Integer> likesFilm = findFilmsLikeIdsFromDb(filmId);
 
         Film film = new Film(name, description, release, duration, mpa, filmGenres);
-
         film.setId(filmId);
+        film.setLikes(likesFilm);
+
         return film;
     }
 
@@ -89,12 +91,22 @@ public class FilmDbStorage implements FilmStorage {
             addGenresToFilm(film, genreIds);
         }
         if (!film.getLikes().isEmpty()) {
-            addUserLikeFilm(film);
+            //addUserLikeFilm(film);
+            film.setLikes(film.getLikes());
         }
         String sqlQueryFilm = "select * from `film` where id = ?";
         List<Film> result = jdbcTemplate.query(sqlQueryFilm, this::mapRowToFilm, film.getId());
-
-        return result.get(0);
+        Film resultFilm = result.get(0);
+        if (film.getGenres() != null) {
+            Set genreIds = getGenreIdsFromFilm(film);
+            addGenresToFilm(resultFilm, genreIds);
+        }
+        if (!film.getLikes().isEmpty()) {
+            //addUserLikeFilm(film);
+            resultFilm.setLikes(film.getLikes());
+        }
+        //return result.get(0);
+        return resultFilm;
     }
 
     private Set<Integer> getGenreIdsFromFilm(Film film) {
@@ -175,7 +187,20 @@ public class FilmDbStorage implements FilmStorage {
         }
         List<Film> result = jdbcTemplate.query(sqlQueryFilm, this::mapRowToFilm, filmId);
 
-        return result.get(0);
+
+        Film resultFilm = result.get(0);
+        if (film.getGenres() != null) {
+            Set genreIds = getGenreIdsFromFilm(film);
+            addGenresToFilm(resultFilm, genreIds);
+        }
+        if (!film.getLikes().isEmpty()) {
+            //addUserLikeFilm(film);
+            resultFilm.setLikes(film.getLikes());
+        }
+        //return result.get(0);
+        return resultFilm;
+
+        // return result.get(0);
     }
 
     private void updateGenres(Film film) {
@@ -318,6 +343,27 @@ public class FilmDbStorage implements FilmStorage {
 
         Mpa mpa = new Mpa(mpaId, name);
         return mpa;
+    }
+
+    @Override
+    public List<Film> findPopularFilms(int count) {
+        List<Integer> idsPopularFilms = findIdsPopularFilms(count);
+        List<Film> popFilms = new ArrayList<>();
+
+        idsPopularFilms.forEach(id -> popFilms.add(findFilmById(id)));
+        return popFilms;
+    }
+
+    private List<Integer> findIdsPopularFilms(int count) {
+        String sql = "select film.id from film\n" +
+                "left join user_likefilm on film.id = user_likefilm.film_id\n" +
+                "group by film.id\n" +
+                "order by count(user_likefilm.film_id) desc\n" +
+                "limit ?";
+        List<Integer> list = jdbcTemplate.queryForList(sql, Integer.class, count);
+        List<Integer> filmIdsList = new ArrayList<>();
+        list.forEach(id -> filmIdsList.add(id));
+        return filmIdsList;
     }
 
     private void deleteUserLikeFilm(Film film) {

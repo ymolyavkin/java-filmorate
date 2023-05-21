@@ -71,4 +71,9 @@ public class InMemoryFilmStorage implements FilmStorage {
     public List<Mpa> findAllMpa() {
         return null;
     }
+
+    @Override
+    public List<Film> findPopularFilms(int count) {
+        return null;
+    }
 }
