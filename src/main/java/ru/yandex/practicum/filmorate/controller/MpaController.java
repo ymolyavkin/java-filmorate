@@ -6,6 +6,7 @@ import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import java.util.List;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/mpa")
