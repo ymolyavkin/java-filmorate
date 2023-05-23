@@ -96,7 +96,7 @@ public class FilmDbStorage implements FilmStorage {
         }
       //  String sqlQueryFilm = "select * from `film` where id = ?";
         String sqlQueryFilm = "select film.id, film.name, description, release,  duration, film.mpa_id, mpa.name " +
-                "from `film` left join mpa on film.mpa_id = mpa.id and film.id = ?";
+                "from `film` join mpa on film.mpa_id = mpa.id and film.id = ?";
         List<Film> result = jdbcTemplate.query(sqlQueryFilm, this::mapRowToFilm, film.getId());
 
         return result.get(0);
@@ -156,7 +156,11 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public Film updateFilm(Film film) {
         int filmId = film.getId();
-        String sqlQueryFilm = "select * from `film` where id = ?";
+        if (!filmExists(filmId)) {
+            throw new NotFoundException("Фильм с id " + filmId + " не найден.");
+        }
+        String sqlQueryFilm = "select film.id, film.name, description, release,  duration, film.mpa_id, mpa.name \" +\n" +
+                "                \"from `film` join mpa on film.mpa_id = mpa.id and film.id = ?";
         SqlRowSet filmRows = jdbcTemplate.queryForRowSet(sqlQueryFilm, filmId);
         if (filmRows.next()) {
             String sqlQuery = "update `film` set name = ?, description = ?, release = ?, duration = ?, mpa_id = ? where id = ?";
@@ -175,9 +179,9 @@ public class FilmDbStorage implements FilmStorage {
             if (!film.getLikes().isEmpty()) {
                 updateLikes(film);
             }
-        } else {
+        } /*else {
             throw new NotFoundException("Фильм с id " + filmId + " не найден.");
-        }
+        }*/
         List<Film> result = jdbcTemplate.query(sqlQueryFilm, this::mapRowToFilm, filmId);
 
         return result.get(0);
@@ -250,7 +254,8 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film findFilmById(int filmId) {
-        String sqlQuery = "select * from `film` where id = ?";
+        String sqlQuery = "select film.id, film.name, description, release,  duration, film.mpa_id, mpa.name \" +\n" +
+                "                \"from `film` join mpa on film.mpa_id = mpa.id and film.id = ?";
         List<Film> result = jdbcTemplate.query(sqlQuery, this::mapRowToFilm, filmId);
         if (result.size() < 1) {
             throw new NotFoundException("Фильм с id " + filmId + " не найден.");
