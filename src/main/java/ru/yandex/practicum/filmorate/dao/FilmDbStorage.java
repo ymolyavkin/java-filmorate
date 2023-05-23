@@ -32,19 +32,20 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public List<Film> findAll() {
-        String sqlQuery = "select id, name, description, release,  duration, mpa_id from `film`";
+        String sqlQuery = "select film.id, film.name, description, release,  duration, film.mpa_id, mpa.name " +
+                "from `film` left join mpa on film.mpa_id = mpa.id";
         return jdbcTemplate.query(sqlQuery, this::mapRowToFilm);
     }
 
     private Film mapRowToFilm(ResultSet resultSet, int rowNum) throws SQLException {
-        int filmId = stringToInt(resultSet.getString("id"));
-        String name = resultSet.getString("name");
+        int filmId = resultSet.getInt("film.id");
+        String name = resultSet.getString("film.name");
         String description = resultSet.getString("description");
-        int duration = stringToInt(resultSet.getString("duration"));
-        int mpaId = stringToInt(resultSet.getString("mpa_id"));
+        int duration = resultSet.getInt("duration");
+        int mpaId = resultSet.getInt("film.mpa_id");
         LocalDate release = LocalDate.parse(resultSet.getString("release"), formatter);
 
-        String rating = findNameMpaById(mpaId);
+        String rating = resultSet.getString("mpa.name");
         Mpa mpa = new Mpa(mpaId, rating);
 
         List<Genre> filmGenres = new ArrayList<>();
@@ -93,7 +94,9 @@ public class FilmDbStorage implements FilmStorage {
         if (!film.getLikes().isEmpty()) {
             addUserLikeFilm(film);
         }
-        String sqlQueryFilm = "select * from `film` where id = ?";
+      //  String sqlQueryFilm = "select * from `film` where id = ?";
+        String sqlQueryFilm = "select film.id, film.name, description, release,  duration, film.mpa_id, mpa.name " +
+                "from `film` left join mpa on film.mpa_id = mpa.id and film.id = ?";
         List<Film> result = jdbcTemplate.query(sqlQueryFilm, this::mapRowToFilm, film.getId());
 
         return result.get(0);
