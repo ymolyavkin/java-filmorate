@@ -13,7 +13,7 @@ import javax.validation.constraints.Positive;
 
 @Data
 public class Film implements Comparable<Film> {
-    private int id;
+    private long id;
     @NotBlank(message = "Название фильма не может быть пустым.")
     private final String name;
     @Length(max = 200, message = "Длина описания превышает допустимый предел.")
@@ -22,7 +22,7 @@ public class Film implements Comparable<Film> {
     private final LocalDate releaseDate;
     @Positive(message = "Продолжительность фильма должна быть положительной.")
     private final int duration;
-    private Set<Integer> likes;
+    private Set<Long> likes;
     private final Mpa mpa;
     private final List<Genre> genres;
 
@@ -55,20 +55,20 @@ public class Film implements Comparable<Film> {
         return mpa.getId();
     }
 
-    public boolean addLike(int userId) {
+    public boolean addLike(long userId) {
         return likes.add(userId);
     }
 
-    public boolean deleteLike(int userId) {
+    public boolean deleteLike(long userId) {
         return likes.remove(userId);
     }
 
-    public int numberOfLikes() {
+    public long numberOfLikes() {
         return likes.size();
     }
 
     @Override
     public int compareTo(Film o) {
-        return Integer.compare(this.numberOfLikes(), o.numberOfLikes());
+        return Long.compare(this.numberOfLikes(), o.numberOfLikes());
     }
 }

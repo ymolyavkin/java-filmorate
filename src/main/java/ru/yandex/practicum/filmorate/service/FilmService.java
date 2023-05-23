@@ -17,13 +17,13 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 public class FilmService {
-    private static int id = 0;
+    private static long id = 0;
     @Qualifier("filmDbStorage")
     private final FilmStorage filmStorage;
     @Qualifier("userDbStorage")
     private final UserStorage userStorage;
 
-    private int generationId() {
+    private long generationId() {
         return ++id;
     }
 
@@ -41,7 +41,7 @@ public class FilmService {
         return filmStorage.findAll();
     }
 
-    public Film findFilmById(int filmId) {
+    public Film findFilmById(long filmId) {
         return filmStorage.findFilmById(filmId);
     }
 
@@ -49,7 +49,7 @@ public class FilmService {
         return filmStorage.findPopularFilms(count);
     }
 
-    public int likeFilm(int filmId, int userId) {
+    public long likeFilm(long filmId, long userId) {
         User user = userStorage.findUserById(userId);
         Film film = findFilmById(filmId);
 
@@ -59,7 +59,7 @@ public class FilmService {
         return userId;
     }
 
-    public int deleteLikeFilm(int filmId, int userId) {
+    public long deleteLikeFilm(long filmId, long userId) {
         User user = userStorage.findUserById(userId);
         Film film = findFilmById(filmId);
 
@@ -69,7 +69,7 @@ public class FilmService {
         return userId;
     }
 
-    public int delete(int filmId) {
+    public long delete(long filmId) {
         return filmStorage.deleteFilmById(filmId);
     }
 

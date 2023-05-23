@@ -19,7 +19,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 import static ru.yandex.practicum.filmorate.Constants.formatter;
-import static ru.yandex.practicum.filmorate.dao.UserDbStorage.stringToInt;
+import static ru.yandex.practicum.filmorate.dao.UserDbStorage.stringToLong;
 
 @Slf4j
 @Component("filmDbStorage")
@@ -37,8 +37,8 @@ public class FilmDbStorage implements FilmStorage {
         return jdbcTemplate.query(sqlQuery, this::mapRowToFilm);
     }
 
-    private Film mapRowToFilm(ResultSet resultSet, int rowNum) throws SQLException {
-        int filmId = resultSet.getInt("film.id");
+    private Film mapRowToFilm(ResultSet resultSet, long rowNum) throws SQLException {
+        long filmId = resultSet.getLong("film.id");
         String name = resultSet.getString("film.name");
         String description = resultSet.getString("description");
         int duration = resultSet.getInt("duration");
@@ -53,7 +53,7 @@ public class FilmDbStorage implements FilmStorage {
         for (Integer genreId : genresIds) {
             filmGenres.add(findGenreById(genreId));
         }
-        Set<Integer> likesFilm = findFilmsLikeIdsFromDb(filmId);
+        Set<Long> likesFilm = findFilmsLikeIdsFromDb(filmId);
 
         Film film = new Film(name, description, release, duration, mpa, filmGenres);
         film.setId(filmId);
@@ -88,7 +88,7 @@ public class FilmDbStorage implements FilmStorage {
         }, keyHolder);
 
         if (film.getGenres() != null) {
-            Set genreIds = getGenreIdsFromFilm(film);
+            Set<Integer> genreIds = getGenreIdsFromFilm(film);
             addGenresToFilm(film, genreIds);
         }
         if (!film.getLikes().isEmpty()) {
@@ -112,7 +112,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     private void addGenresToFilm(Film film, Set<Integer> genreIds) {
-        int filmId = film.getId();
+        long filmId = film.getId();
 
         for (int genreId : genreIds) {
             String sqlQuery = "insert into `film_genre`(film_id, genre_id) values (?, ?)";
@@ -121,10 +121,10 @@ public class FilmDbStorage implements FilmStorage {
         }
     }
 
-    private void addLikesToFilm(Film film, Set<Integer> userIds) {
-        int filmId = film.getId();
+    private void addLikesToFilm(Film film, Set<Long> userIds) {
+        long filmId = film.getId();
 
-        for (int userId : userIds) {
+        for (long userId : userIds) {
             String sqlQuery = "insert into `user_likefilm`(user_id, film_id) values (?, ?)";
             jdbcTemplate.update(sqlQuery, userId, filmId);
             log.info("Пользователь с id {} поставил лайк фильму с id {}.", userId, filmId);
@@ -132,16 +132,16 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     private void addUserLikeFilm(Film film) {
-        int filmId = film.getId();
-        Set<Integer> likes = film.getLikes();
-        for (Integer userIdLike : likes) {
+        long filmId = film.getId();
+        Set<Long> likes = film.getLikes();
+        for (long userIdLike : likes) {
             String sqlQuery = "insert into `user_likefilm`(user_id, film_id) values (?, ?)";
             jdbcTemplate.update(sqlQuery, userIdLike, filmId);
             log.info("Фильму с id {} поставил лайк пользователь с id {}.", filmId, userIdLike);
         }
     }
 
-    private Set<Integer> findFilmsGenreIdsFromDb(int filmId) {
+    private Set<Integer> findFilmsGenreIdsFromDb(long filmId) {
         if (filmExists(filmId)) {
             String sqlQuery = "select genre_id from `film_genre` where film_id = ?";
             List<Integer> listGenres = jdbcTemplate.queryForList(sqlQuery, Integer.class, filmId);
@@ -155,7 +155,7 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film updateFilm(Film film) {
-        int filmId = film.getId();
+        long filmId = film.getId();
         if (!filmExists(filmId)) {
             throw new NotFoundException("Фильм с id " + filmId + " не найден.");
         }
@@ -179,9 +179,7 @@ public class FilmDbStorage implements FilmStorage {
             if (!film.getLikes().isEmpty()) {
                 updateLikes(film);
             }
-        } /*else {
-            throw new NotFoundException("Фильм с id " + filmId + " не найден.");
-        }*/
+        }
         List<Film> result = jdbcTemplate.query(sqlQueryFilm, this::mapRowToFilm, filmId);
 
         return result.get(0);
@@ -206,11 +204,11 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     private void updateLikes(Film film) {
-        Set<Integer> newSetLikeIds = film.getLikes();
-        Set<Integer> oldSetLikeIds = findFilmsLikeIdsFromDb(film.getId());
+        Set<Long> newSetLikeIds = film.getLikes();
+        Set<Long> oldSetLikeIds = findFilmsLikeIdsFromDb(film.getId());
 
-        Set<Integer> saveNewSetLikeIds = newSetLikeIds;
-        Set<Integer> saveOldSetLikeIds = oldSetLikeIds;
+        Set<Long> saveNewSetLikeIds = newSetLikeIds;
+        Set<Long> saveOldSetLikeIds = oldSetLikeIds;
 
         oldSetLikeIds.removeAll(newSetLikeIds);
         saveNewSetLikeIds.removeAll(saveOldSetLikeIds);
@@ -223,18 +221,18 @@ public class FilmDbStorage implements FilmStorage {
         }
     }
 
-    private Set<Integer> findFilmsLikeIdsFromDb(int filmId) {
+    private Set<Long> findFilmsLikeIdsFromDb(long filmId) {
         if (filmExists(filmId)) {
             String sqlQuery = "select user_id from `user_likefilm` where film_id = ?";
-            List<Integer> listLikes = jdbcTemplate.queryForList(sqlQuery, Integer.class, filmId);
+            List<Long> listLikes = jdbcTemplate.queryForList(sqlQuery, Long.class, filmId);
 
-            return new HashSet<Integer>(listLikes);
+            return new HashSet<Long>(listLikes);
         } else {
             throw new NotFoundException("Фильм с id " + filmId + " не найден.");
         }
     }
 
-    private void deleteGenresFromFilm(int filmId, Set<Integer> genreIds) {
+    private void deleteGenresFromFilm(long filmId, Set<Integer> genreIds) {
         for (int genreId : genreIds) {
             String sqlQuery = "delete from `film_genre` where film_id = ? and genre_id = ?";
             if (jdbcTemplate.update(sqlQuery, filmId, genreId) > 0) {
@@ -243,8 +241,8 @@ public class FilmDbStorage implements FilmStorage {
         }
     }
 
-    private void deleteLikesFromFilm(int filmId, Set<Integer> userIds) {
-        for (int userId : userIds) {
+    private void deleteLikesFromFilm(long filmId, Set<Long> userIds) {
+        for (long userId : userIds) {
             String sqlQuery = "delete from `user_likefilm` where film_id = ? and user_id = ?";
             if (jdbcTemplate.update(sqlQuery, filmId, userId) > 0) {
                 log.info("Удалён лайк пользователя {} у фильма {}", userId, filmId);
@@ -253,7 +251,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public Film findFilmById(int filmId) {
+    public Film findFilmById(long filmId) {
         String sqlQuery = "select film.id, film.name, description, release,  duration, film.mpa_id, mpa.name \" +\n" +
                 "                \"from `film` join mpa on film.mpa_id = mpa.id and film.id = ?";
         List<Film> result = jdbcTemplate.query(sqlQuery, this::mapRowToFilm, filmId);
@@ -264,7 +262,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public int deleteFilmById(int filmId) {
+    public long deleteFilmById(long filmId) {
         deleteGenresFromFilm(filmId, findFilmsGenreIdsFromDb(filmId));
         deleteLikesFromFilm(filmId, findFilmsLikeIdsFromDb(filmId));
         String sqlQuery = "delete from `film` where id = ?";
@@ -284,7 +282,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     private Genre mapRowToGenre(ResultSet resultSet, int rowNum) throws SQLException {
-        int genreId = stringToInt(resultSet.getString("id"));
+        int genreId = resultSet.getInt("id");
         String name = resultSet.getString("name");
 
         Genre genre = new Genre(genreId, name);
@@ -323,7 +321,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     private Mpa mapRowToMpa(ResultSet resultSet, int rowNum) throws SQLException {
-        int mpaId = stringToInt(resultSet.getString("id"));
+        int mpaId = resultSet.getInt("id");
         String name = resultSet.getString("name");
 
         Mpa mpa = new Mpa(mpaId, name);
@@ -352,9 +350,9 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     private void deleteUserLikeFilm(Film film) {
-        int filmId = film.getId();
-        Set<Integer> likes = film.getLikes();
-        for (Integer userId : likes) {
+        long filmId = film.getId();
+        Set<Long> likes = film.getLikes();
+        for (long userId : likes) {
             String sqlQuery = "delete from `user_likefilm` where film_id = ? and user_id = ?";
             if (jdbcTemplate.update(sqlQuery, filmId, userId) > 0) {
                 log.info("Удалён лайк пользователя {} у фильма {}", userId, filmId);
@@ -363,7 +361,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     private void deleteFilmGenre(Film film) {
-        int filmId = film.getId();
+        long filmId = film.getId();
         Set<Integer> setGenres = new HashSet<>();
 
         List<Genre> mapsGenres = film.getGenres();
@@ -378,10 +376,10 @@ public class FilmDbStorage implements FilmStorage {
         }
     }
 
-    private boolean filmExists(int id) {
+    private boolean filmExists(long id) {
         String sqlQuery = "select count(*) from `film` where id = ?";
         //noinspection ConstantConditions: return value is always an int, so NPE is impossible here
-        int result = jdbcTemplate.queryForObject(sqlQuery, Integer.class, id);
+        long result = jdbcTemplate.queryForObject(sqlQuery, Long.class, id);
 
         return result == 1;
     }

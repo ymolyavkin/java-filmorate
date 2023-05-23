@@ -13,9 +13,9 @@ public interface FilmStorage {
 
     public Film updateFilm(Film film);
 
-    public Film findFilmById(int filmId);
+    public Film findFilmById(long filmId);
 
-    public int deleteFilmById(int filmId);
+    public long deleteFilmById(long filmId);
 
     public List<Genre> findAllGenres();
 

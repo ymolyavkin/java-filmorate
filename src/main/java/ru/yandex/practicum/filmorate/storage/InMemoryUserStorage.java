@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 @Component
 public class InMemoryUserStorage implements UserStorage {
-    private final Map<Integer, User> users = new HashMap<>();
+    private final Map<Long, User> users = new HashMap<>();
 
     @Override
     public List<User> findAll() {
@@ -19,7 +19,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public int addUser(User user) {
+    public long addUser(User user) {
         users.put(user.getId(), user);
         return user.getId();
     }
@@ -36,7 +36,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User findUserById(int userId) {
+    public User findUserById(long userId) {
         if (!users.containsKey(userId)) {
             throw new NotFoundException("Пользователь с id " + userId + " не найден.");
         }
@@ -44,7 +44,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public int deleteUserById(int userId) {
+    public long deleteUserById(long userId) {
         if (!users.containsKey(userId)) {
             throw new NotFoundException("Пользователь с id " + userId + " не найден.");
         }
@@ -53,11 +53,11 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public int deleteFriendFromUser(int userId, int friendId) {
+    public long deleteFriendFromUser(long userId, long friendId) {
         return 0;
     }
 
     @Override
-    public void addFriend(int userId, int friendId) {
+    public void addFriend(long userId, long friendId) {
     }
 }

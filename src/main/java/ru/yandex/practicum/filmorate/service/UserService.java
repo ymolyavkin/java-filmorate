@@ -25,7 +25,7 @@ public class UserService {
             user.setName(user.getLogin());
             log.info("Имя пользователя пусто");
         }
-        int idUser = userStorage.addUser(user);
+        long idUser = userStorage.addUser(user);
         user.setId(idUser);
         return user;
     }
@@ -40,40 +40,40 @@ public class UserService {
         return userStorage.findAll();
     }
 
-    public User findUserById(int userId) {
+    public User findUserById(long userId) {
         return userStorage.findUserById(userId);
     }
 
-    public void addFriend(int userId, int friendId) {
+    public void addFriend(long userId, long friendId) {
         userStorage.addFriend(userId, friendId);
     }
 
-    public void deleteFriend(int userId, int friendId) {
+    public void deleteFriend(long userId, long friendId) {
         userStorage.deleteFriendFromUser(userId, friendId);
     }
 
-    public List<User> findFriends(int userId) {
+    public List<User> findFriends(long userId) {
         User user = findUserById(userId);
-        Set<Integer> friends = user.getFriends();
+        Set<Long> friends = user.getFriends();
 
         List<User> listFriends = new ArrayList<>();
-        for (int friendId : friends) {
+        for (long friendId : friends) {
             listFriends.add(findUserById(friendId));
         }
         return listFriends;
     }
 
-    public List<User> findCommonFriends(int userId, int otherId) {
+    public List<User> findCommonFriends(long userId, long otherId) {
         List<User> listCommonFriends = new ArrayList<>();
         User user = findUserById(userId);
         User other = findUserById(otherId);
 
-        List<Integer> commonId = user.getCommonFriends(other);
+        List<Long> commonId = user.getCommonFriends(other);
         commonId.stream().forEach(id -> listCommonFriends.add(findUserById(id)));
         return listCommonFriends;
     }
 
-    public int delete(int userId) {
+    public long delete(long userId) {
         return userStorage.deleteUserById(userId);
     }
 }

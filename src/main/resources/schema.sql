@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS `user`(
 );
 
 CREATE TABLE IF NOT EXISTS `genre` (
-                                            id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                                            id INTEGER AUTO_INCREMENT PRIMARY KEY,
                                             name VARCHAR(50) NOT NULL
 );
 CREATE TABLE IF NOT EXISTS `friendship` (
@@ -27,8 +27,8 @@ CREATE TABLE IF NOT EXISTS `film`
     id          BIGINT AUTO_INCREMENT PRIMARY KEY,
     name        VARCHAR(50)  NOT NULL,
     description VARCHAR(200) NOT NULL,
-    release     DATE         NOT NULL CHECK (release > '1895-12-28'),
-    duration    INTEGER CHECK (duration > 0),
+    release     DATE         NOT NULL,
+    duration    INTEGER      NOT NULL,
     mpa_id      INTEGER      NOT NULL,
     CONSTRAINT FK_mpa_id FOREIGN KEY (mpa_id) REFERENCES `mpa` (id)
 );

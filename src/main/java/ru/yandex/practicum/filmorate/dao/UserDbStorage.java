@@ -37,8 +37,8 @@ public class UserDbStorage implements UserStorage {
         return jdbcTemplate.query(sqlQuery, this::mapRowToUser);
     }
 
-    private User mapRowToUser(ResultSet resultSet, int rowNum) throws SQLException {
-        int userId = stringToInt(resultSet.getString("id"));
+    private User mapRowToUser(ResultSet resultSet, long rowNum) throws SQLException {
+        long userId = resultSet.getLong("id");
         String email = resultSet.getString("email");
         String login = resultSet.getString("login");
         String name = resultSet.getString("name");
@@ -50,15 +50,15 @@ public class UserDbStorage implements UserStorage {
         return user;
     }
 
-    private int mapRowToFriendId(ResultSet resultSet, int rowNum) throws SQLException {
-        int userId = stringToInt(resultSet.getString("one_friend_id"));
-        int friendId = stringToInt(resultSet.getString("other_friend_id"));
+    private long mapRowToFriendId(ResultSet resultSet, long rowNum) throws SQLException {
+        long userId = resultSet.getLong("one_friend_id");
+        long friendId = resultSet.getLong("other_friend_id");
 
         return friendId;
     }
 
     @Override
-    public int addUser(User user) {
+    public long addUser(User user) {
         String sqlQuery = "insert into `user`(email, login, name, birthday) values (?, ?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
@@ -75,7 +75,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public void updateUser(User user) {
-        String userId = Integer.toString(user.getId());
+        String userId = Long.toString(user.getId());
         SqlRowSet userRows = jdbcTemplate.queryForRowSet("select * from `user` where id = ?", userId);
         if (userRows.next()) {
             String sqlQuery = "update `user` set email = ?, login = ?, name = ?, birthday = ? where id = ?";
@@ -92,7 +92,7 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public User findUserById(int userId) {
+    public User findUserById(long userId) {
         SqlRowSet userRows = jdbcTemplate.queryForRowSet("select * from `user` where id = ?", userId);
         if (userRows.next()) {
             String email = userRows.getString("email");
@@ -111,7 +111,7 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public int deleteUserById(int userId) {
+    public long deleteUserById(long userId) {
         String sqlQuery = "delete from `user` where id = ?";
 
         if (jdbcTemplate.update(sqlQuery, userId) > 0) {
@@ -123,7 +123,7 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public int deleteFriendFromUser(int userId, int friendId) {
+    public long deleteFriendFromUser(long userId, long friendId) {
         String sqlQuery = "delete from `friendship` where one_friend_id = ? and other_friend_id = ?";
 
         if (jdbcTemplate.update(sqlQuery, userId, friendId) > 0) {
@@ -135,7 +135,7 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public void addFriend(int userId, int friendId) {
+    public void addFriend(long userId, long friendId) {
         if (userExists(userId) && userExists(friendId)) {
             String sqlQuery = "insert into `friendship`(one_friend_id, other_friend_id) values (?, ?)";
 
@@ -146,21 +146,21 @@ public class UserDbStorage implements UserStorage {
         }
     }
 
-    private Set<Integer> findUsersFriends(int userId) {
+    private Set<Long> findUsersFriends(long userId) {
         if (userExists(userId)) {
             String sqlQuery = "select other_friend_id from `friendship` where one_friend_id = ?";
-            List<Integer> listFriends = jdbcTemplate.queryForList(sqlQuery, Integer.class, userId);
+            List<Long> listFriends = jdbcTemplate.queryForList(sqlQuery, Long.class, userId);
 
-            return new HashSet<Integer>(listFriends);
+            return new HashSet<Long>(listFriends);
         } else {
             throw new NotFoundException("Пользователь с id " + userId + " не найден.");
         }
     }
 
-    private boolean userExists(int id) {
+    private boolean userExists(long id) {
         String sqlQuery = "select count(*) from `user` where id = ?";
         //noinspection ConstantConditions: return value is always an int, so NPE is impossible here
-        int result = jdbcTemplate.queryForObject(sqlQuery, Integer.class, id);
+        long result = jdbcTemplate.queryForObject(sqlQuery, Long.class, id);
 
         return result == 1;
     }
@@ -177,7 +177,7 @@ public class UserDbStorage implements UserStorage {
     }
 
 
-    static int stringToInt(String userInput) {
+    static long stringToLong(String userInput) {
         // Шаблон выбирает первое число из строки
         Pattern pattern = Pattern.compile(".*?(\\d+).*");
         Matcher matcher = pattern.matcher(userInput);
@@ -185,6 +185,6 @@ public class UserDbStorage implements UserStorage {
         if (matcher.find()) {
             number = matcher.group(1);
         }
-        return Integer.valueOf(number);
+        return Long.valueOf(number);
     }
 }

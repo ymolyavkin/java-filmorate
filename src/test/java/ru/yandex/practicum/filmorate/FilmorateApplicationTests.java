@@ -67,10 +67,10 @@ class FilmorateApplicationTests {
 
     private void createUsers() {
         userOne = new User("Nick Name", "mail@mail.ru", "dolore", LocalDate.of(1946, 8, 20));
-        int userOneId = userStorage.addUser(userOne);
+        long userOneId = userStorage.addUser(userOne);
 
         userTwo = new User("Nick Name", "mail@mail.ru", "dolore", LocalDate.of(1946, 8, 20));
-        int userTwoId = userStorage.addUser(userTwo);
+        long userTwoId = userStorage.addUser(userTwo);
     }
 
 
@@ -121,7 +121,7 @@ class FilmorateApplicationTests {
     @Test
     public void testFindFilmById() {
         Film actualFilm = filmStorage.findFilmById(1);
-        int filmId = actualFilm.getId();
+        long filmId = actualFilm.getId();
 
         assertThat(actualFilm).isNotNull();
         assertEquals(filmId, 1);
@@ -188,9 +188,9 @@ class FilmorateApplicationTests {
 
     @Test
     void findPopularFilms() {
-        Set<Integer> likes = new HashSet<>();
-        likes.add(1);
-        likes.add(2);
+        Set<Long> likes = new HashSet<>();
+        likes.add(1L);
+        likes.add(2L);
         film.setLikes(likes);
         filmStorage.updateFilm(film);
 
@@ -211,7 +211,7 @@ class FilmorateApplicationTests {
 
     @Test
     void addUser() {
-        int userId = userStorage.addUser(userOne);
+        long userId = userStorage.addUser(userOne);
 
         assertEquals(3, userId);
     }
