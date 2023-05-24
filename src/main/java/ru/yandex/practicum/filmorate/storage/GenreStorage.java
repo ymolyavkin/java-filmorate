@@ -6,5 +6,6 @@ import java.util.List;
 
 public interface GenreStorage {
     public List<Genre> findAllGenres();
+
     public Genre findGenreById(int genreId);
 }
