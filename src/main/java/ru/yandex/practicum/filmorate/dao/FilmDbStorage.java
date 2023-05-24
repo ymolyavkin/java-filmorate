@@ -17,6 +17,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static ru.yandex.practicum.filmorate.Constants.formatter;
 import static ru.yandex.practicum.filmorate.dao.UserDbStorage.stringToLong;
@@ -94,7 +95,6 @@ public class FilmDbStorage implements FilmStorage {
         if (!film.getLikes().isEmpty()) {
             addUserLikeFilm(film);
         }
-      //  String sqlQueryFilm = "select * from `film` where id = ?";
         String sqlQueryFilm = "select film.id, film.name, description, release,  duration, film.mpa_id, mpa.name " +
                 "from `film` join mpa on film.mpa_id = mpa.id and film.id = ?";
         List<Film> result = jdbcTemplate.query(sqlQueryFilm, this::mapRowToFilm, film.getId());
@@ -103,12 +103,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     private Set<Integer> getGenreIdsFromFilm(Film film) {
-        Set<Integer> genreIds = new HashSet<>();
-        List<Genre> genres = film.getGenres();
-        for (Genre genre : genres) {
-            genreIds.add(genre.getId());
-        }
-        return genreIds;
+        return film.getGenres().stream().map(genre -> genre.getId()).collect(Collectors.toSet());
     }
 
     private void addGenresToFilm(Film film, Set<Integer> genreIds) {
@@ -343,9 +338,9 @@ public class FilmDbStorage implements FilmStorage {
                 "group by film.id\n" +
                 "order by count(user_likefilm.film_id) desc\n" +
                 "limit ?";
-        List<Integer> list = jdbcTemplate.queryForList(sql, Integer.class, count);
+        List<Integer> queryForList = jdbcTemplate.queryForList(sql, Integer.class, count);
         List<Integer> filmIdsList = new ArrayList<>();
-        list.forEach(id -> filmIdsList.add(id));
+        queryForList.forEach(id -> filmIdsList.add(id));
         return filmIdsList;
     }
 
