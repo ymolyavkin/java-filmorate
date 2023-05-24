@@ -20,6 +20,7 @@ public class GenreDbStorage implements GenreStorage {
     public GenreDbStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
+
     @Override
     public List<Genre> findAllGenres() {
         String sqlQuery = "select id, name from `genre`";
