@@ -49,11 +49,9 @@ public class FilmDbStorage implements FilmStorage {
         String rating = resultSet.getString("mpa.name");
         Mpa mpa = new Mpa(mpaId, rating);
 
-        List<Genre> filmGenres = new ArrayList<>();
         Set<Integer> genresIds = findFilmsGenreIdsFromDb(filmId);
-        for (Integer genreId : genresIds) {
-            filmGenres.add(findGenreById(genreId));
-        }
+        List<Genre> filmGenres = genresIds.stream().map(genreId -> findGenreById(genreId)).collect(Collectors.toList());
+
         Set<Long> likesFilm = findFilmsLikeIdsFromDb(filmId);
 
         Film film = new Film(name, description, release, duration, mpa, filmGenres);
@@ -61,17 +59,6 @@ public class FilmDbStorage implements FilmStorage {
         film.setLikes(likesFilm);
 
         return film;
-    }
-
-    private String findNameMpaById(int mpaId) {
-        SqlRowSet genreRows = jdbcTemplate.queryForRowSet("select name from `mpa` where id = ?", mpaId);
-        if (genreRows.next()) {
-            String name = genreRows.getString("name");
-
-            return name;
-        } else {
-            throw new NotFoundException("mpa с id " + mpaId + " не найден.");
-        }
     }
 
     @Override
@@ -357,12 +344,10 @@ public class FilmDbStorage implements FilmStorage {
 
     private void deleteFilmGenre(Film film) {
         long filmId = film.getId();
-        Set<Integer> setGenres = new HashSet<>();
 
         List<Genre> mapsGenres = film.getGenres();
-        for (Genre genre : mapsGenres) {
-            setGenres.add(genre.getId());
-        }
+        Set<Integer> setGenres = mapsGenres.stream().map(genre -> genre.getId()).collect(Collectors.toSet());
+
         for (Integer genreId : setGenres) {
             String sqlQuery = "delete from `film_genre` where film_id = ? and genre_id = ?";
             if (jdbcTemplate.update(sqlQuery, filmId, genreId) > 0) {
