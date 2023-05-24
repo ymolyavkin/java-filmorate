@@ -5,8 +5,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
@@ -71,22 +69,6 @@ public class FilmService {
 
     public long delete(long filmId) {
         return filmStorage.deleteFilmById(filmId);
-    }
-
-    public List<Genre> findAllGenres() {
-        return filmStorage.findAllGenres();
-    }
-
-    public Genre findGenreById(int genreId) {
-        return filmStorage.findGenreById(genreId);
-    }
-
-    public Mpa findMpaById(int mpaId) {
-        return filmStorage.findMpaById(mpaId);
-    }
-
-    public List<Mpa> findAllMpa() {
-        return filmStorage.findAllMpa();
     }
 }
 

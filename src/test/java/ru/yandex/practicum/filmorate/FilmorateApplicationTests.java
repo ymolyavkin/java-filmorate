@@ -18,6 +18,8 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import ru.yandex.practicum.filmorate.dao.FilmDbStorage;
+import ru.yandex.practicum.filmorate.dao.GenreDbStorage;
+import ru.yandex.practicum.filmorate.dao.MpaDbStorage;
 import ru.yandex.practicum.filmorate.dao.UserDbStorage;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
@@ -33,6 +35,10 @@ class FilmorateApplicationTests {
     private final UserDbStorage userStorage;
     @Autowired
     private final FilmDbStorage filmStorage;
+    @Autowired
+    private final GenreDbStorage genreStorage;
+    @Autowired
+    private final MpaDbStorage mpaStorage;
     private static Film film;
     private static User userOne;
     private static User userTwo;
@@ -140,7 +146,7 @@ class FilmorateApplicationTests {
 
     @Test
     void findAllGenres() {
-        List<Genre> allGenres = filmStorage.findAllGenres();
+        List<Genre> allGenres = genreStorage.findAllGenres();
 
         assertEquals(6, allGenres.size());
         assertEquals("Комедия", allGenres.get(0).getName());
@@ -148,12 +154,12 @@ class FilmorateApplicationTests {
 
     @Test
     void findGenreById() {
-        Genre genre1 = filmStorage.findGenreById(1);
-        Genre genre2 = filmStorage.findGenreById(2);
-        Genre genre3 = filmStorage.findGenreById(3);
-        Genre genre4 = filmStorage.findGenreById(4);
-        Genre genre5 = filmStorage.findGenreById(5);
-        Genre genre6 = filmStorage.findGenreById(6);
+        Genre genre1 = genreStorage.findGenreById(1);
+        Genre genre2 = genreStorage.findGenreById(2);
+        Genre genre3 = genreStorage.findGenreById(3);
+        Genre genre4 = genreStorage.findGenreById(4);
+        Genre genre5 = genreStorage.findGenreById(5);
+        Genre genre6 = genreStorage.findGenreById(6);
 
         assertEquals("Комедия", genre1.getName());
         assertEquals("Драма", genre2.getName());
@@ -165,11 +171,11 @@ class FilmorateApplicationTests {
 
     @Test
     void findMpaById() {
-        Mpa mpa1 = filmStorage.findMpaById(1);
-        Mpa mpa2 = filmStorage.findMpaById(2);
-        Mpa mpa3 = filmStorage.findMpaById(3);
-        Mpa mpa4 = filmStorage.findMpaById(4);
-        Mpa mpa5 = filmStorage.findMpaById(5);
+        Mpa mpa1 = mpaStorage.findMpaById(1);
+        Mpa mpa2 = mpaStorage.findMpaById(2);
+        Mpa mpa3 = mpaStorage.findMpaById(3);
+        Mpa mpa4 = mpaStorage.findMpaById(4);
+        Mpa mpa5 = mpaStorage.findMpaById(5);
 
         assertEquals("G", mpa1.getName());
         assertEquals("PG", mpa2.getName());
@@ -180,7 +186,7 @@ class FilmorateApplicationTests {
 
     @Test
     void findAllMpa() {
-        List<Mpa> allMpa = filmStorage.findAllMpa();
+        List<Mpa> allMpa = mpaStorage.findAllMpa();
 
         assertEquals(5, allMpa.size());
         assertEquals("G", allMpa.get(0).getName());

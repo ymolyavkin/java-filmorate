@@ -20,15 +20,16 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static ru.yandex.practicum.filmorate.Constants.formatter;
-import static ru.yandex.practicum.filmorate.dao.UserDbStorage.stringToLong;
 
 @Slf4j
 @Component("filmDbStorage")
 public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
+    private final GenreDbStorage genreDbStorage;
 
-    public FilmDbStorage(JdbcTemplate jdbcTemplate) {
+    public FilmDbStorage(JdbcTemplate jdbcTemplate, GenreDbStorage genreDbStorage) {
         this.jdbcTemplate = jdbcTemplate;
+        this.genreDbStorage = genreDbStorage;
     }
 
     @Override
@@ -50,7 +51,7 @@ public class FilmDbStorage implements FilmStorage {
         Mpa mpa = new Mpa(mpaId, rating);
 
         Set<Integer> genresIds = findFilmsGenreIdsFromDb(filmId);
-        List<Genre> filmGenres = genresIds.stream().map(genreId -> findGenreById(genreId)).collect(Collectors.toList());
+        List<Genre> filmGenres = genresIds.stream().map(genreId -> genreDbStorage.findGenreById(genreId)).collect(Collectors.toList());
 
         Set<Long> likesFilm = findFilmsLikeIdsFromDb(filmId);
 
@@ -255,59 +256,6 @@ public class FilmDbStorage implements FilmStorage {
             throw new NotFoundException("Фильм с id " + filmId + " не найден.");
         }
         return filmId;
-    }
-
-    @Override
-    public List<Genre> findAllGenres() {
-        String sqlQuery = "select id, name from `genre`";
-        return jdbcTemplate.query(sqlQuery, this::mapRowToGenre);
-    }
-
-    private Genre mapRowToGenre(ResultSet resultSet, int rowNum) throws SQLException {
-        int genreId = resultSet.getInt("id");
-        String name = resultSet.getString("name");
-
-        Genre genre = new Genre(genreId, name);
-        return genre;
-    }
-
-    @Override
-    public Genre findGenreById(int genreId) {
-        SqlRowSet genreRows = jdbcTemplate.queryForRowSet("select name from `genre` where id = ?", genreId);
-        if (genreRows.next()) {
-            String name = genreRows.getString("name");
-            Genre genre = new Genre(genreId, name);
-            return genre;
-        } else {
-            throw new NotFoundException("Жанр с id " + genreId + " не найден.");
-        }
-    }
-
-
-    @Override
-    public Mpa findMpaById(int mpaId) {
-        SqlRowSet mpaRows = jdbcTemplate.queryForRowSet("select name from `mpa` where id = ?", mpaId);
-        if (mpaRows.next()) {
-            String name = mpaRows.getString("name");
-            Mpa mpa = new Mpa(mpaId, name);
-            return mpa;
-        } else {
-            throw new NotFoundException("Жанр с id " + mpaId + " не найден.");
-        }
-    }
-
-    @Override
-    public List<Mpa> findAllMpa() {
-        String sqlQuery = "select id, name from `mpa`";
-        return jdbcTemplate.query(sqlQuery, this::mapRowToMpa);
-    }
-
-    private Mpa mapRowToMpa(ResultSet resultSet, int rowNum) throws SQLException {
-        int mpaId = resultSet.getInt("id");
-        String name = resultSet.getString("name");
-
-        Mpa mpa = new Mpa(mpaId, name);
-        return mpa;
     }
 
     @Override

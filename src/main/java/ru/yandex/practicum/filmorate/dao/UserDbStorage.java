@@ -165,18 +165,6 @@ public class UserDbStorage implements UserStorage {
         return result == 1;
     }
 
-    public void insertIntoGenre() {
-        String sqlQuery = "insert into genre(name) values (?)";
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbcTemplate.update(connection -> {
-            PreparedStatement stmt = connection.prepareStatement(sqlQuery, new String[]{"id"});
-            stmt.setString(1, "first");
-
-            return stmt;
-        }, keyHolder);
-    }
-
-
     static long stringToLong(String userInput) {
         // Шаблон выбирает первое число из строки
         Pattern pattern = Pattern.compile(".*?(\\d+).*");

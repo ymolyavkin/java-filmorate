@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.service.MpaService;
 
 import java.util.List;
 
@@ -11,15 +12,15 @@ import java.util.List;
 @RestController
 @RequestMapping("/mpa")
 public class MpaController {
-    private final FilmService filmService;
+    private final MpaService mpaService;
 
     @GetMapping
     public List<Mpa> findAllMpa() {
-        return filmService.findAllMpa();
+        return mpaService.findAllMpa();
     }
 
     @GetMapping("{mpaId}")
     public Mpa findmpaById(@PathVariable("mpaId") int mpaId) {
-        return filmService.findMpaById(mpaId);
+        return mpaService.findMpaById(mpaId);
     }
 }
