@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 import ru.yandex.practicum.filmorate.model.User;
@@ -16,22 +17,16 @@ import java.util.Set;
 @RequiredArgsConstructor
 @Service
 public class UserService {
-    private static int id = 0;
+    @Qualifier("userDbStorage")
     private final UserStorage userStorage;
 
-    private int generationId() {
-        return ++id;
-    }
-
     public User create(@RequestBody User user) {
-        user.setId(generationId());
-
         if (user.getName().isBlank()) {
             user.setName(user.getLogin());
             log.info("Имя пользователя пусто");
         }
-        userStorage.addUser(user);
-
+        long idUser = userStorage.addUser(user);
+        user.setId(idUser);
         return user;
     }
 
@@ -45,56 +40,40 @@ public class UserService {
         return userStorage.findAll();
     }
 
-    public User findUserById(Integer userId) {
+    public User findUserById(long userId) {
         return userStorage.findUserById(userId);
     }
 
-    public void addFriend(Integer userId, Integer friendId) {
-        User user = findUserById(userId);
-        User friend = findUserById(friendId);
-
-        user.addFriend(friendId);
-        put(user);
-
-        friend.addFriend(userId);
-        put(friend);
+    public void addFriend(long userId, long friendId) {
+        userStorage.addFriend(userId, friendId);
     }
 
-    public void deleteFriend(Integer userId, Integer friendId) {
-        User user = findUserById(userId);
-        User friend = findUserById(friendId);
-
-        user.deleteFriend(friendId);
-        put(user);
-
-        friend.deleteFriend(userId);
-        put(friend);
+    public void deleteFriend(long userId, long friendId) {
+        userStorage.deleteFriendFromUser(userId, friendId);
     }
 
-    public List<User> findFriends(int userId) {
+    public List<User> findFriends(long userId) {
         User user = findUserById(userId);
-        Set<Integer> friends = user.getFriends();
+        Set<Long> friends = user.getFriends();
 
         List<User> listFriends = new ArrayList<>();
-        for (Integer friendId : friends) {
+        for (long friendId : friends) {
             listFriends.add(findUserById(friendId));
         }
         return listFriends;
     }
 
-    public List<User> findCommonFriends(int userId, int otherId) {
+    public List<User> findCommonFriends(long userId, long otherId) {
         List<User> listCommonFriends = new ArrayList<>();
         User user = findUserById(userId);
         User other = findUserById(otherId);
 
-        List<Integer> commonId = user.getCommonFriends(other);
+        List<Long> commonId = user.getCommonFriends(other);
         commonId.stream().forEach(id -> listCommonFriends.add(findUserById(id)));
         return listCommonFriends;
     }
 
-    public User delete(User user) {
-        userStorage.deleteUser(user);
-
-        return user;
+    public long delete(long userId) {
+        return userStorage.deleteUserById(userId);
     }
 }

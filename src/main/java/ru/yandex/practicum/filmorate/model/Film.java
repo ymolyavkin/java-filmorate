@@ -1,10 +1,9 @@
 package ru.yandex.practicum.filmorate.model;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 import ru.yandex.practicum.filmorate.validation.Release;
@@ -14,7 +13,7 @@ import javax.validation.constraints.Positive;
 
 @Data
 public class Film implements Comparable<Film> {
-    private int id;
+    private long id;
     @NotBlank(message = "Название фильма не может быть пустым.")
     private final String name;
     @Length(max = 200, message = "Длина описания превышает допустимый предел.")
@@ -23,14 +22,18 @@ public class Film implements Comparable<Film> {
     private final LocalDate releaseDate;
     @Positive(message = "Продолжительность фильма должна быть положительной.")
     private final int duration;
-    private Set<Integer> likes;
+    private Set<Long> likes;
+    private final Mpa mpa;
+    private final List<Genre> genres;
 
-
-    public Film(String name, String description, LocalDate releaseDate, int duration) {
+    public Film(String name, String description, LocalDate releaseDate, int duration,
+                Mpa mpa, List<Genre> genres) {
         this.name = name;
         this.description = description;
         this.releaseDate = releaseDate;
         this.duration = duration;
+        this.mpa = mpa;
+        this.genres = genres;
         likes = new HashSet<>();
     }
 
@@ -47,20 +50,25 @@ public class Film implements Comparable<Film> {
         return Objects.hash(id, name);
     }
 
-    public boolean addLike(Integer userId) {
+    @JsonIgnore
+    public int getMpaId() {
+        return mpa.getId();
+    }
+
+    public boolean addLike(long userId) {
         return likes.add(userId);
     }
 
-    public boolean deleteLike(Integer userId) {
+    public boolean deleteLike(long userId) {
         return likes.remove(userId);
     }
 
-    public int numberOfLikes() {
+    public long numberOfLikes() {
         return likes.size();
     }
 
     @Override
     public int compareTo(Film o) {
-        return Integer.compare(this.numberOfLikes(), o.numberOfLikes());
+        return Long.compare(this.numberOfLikes(), o.numberOfLikes());
     }
 }

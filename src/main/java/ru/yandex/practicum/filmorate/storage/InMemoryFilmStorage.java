@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
-    private final Map<Integer, Film> films = new HashMap<>();
+    private final Map<Long, Film> films = new HashMap<>();
 
     @Override
     public List<Film> findAll() {
@@ -19,20 +19,22 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public void addFilm(Film film) {
+    public Film addFilm(Film film) {
         films.put(film.getId(), film);
+        return film;
     }
 
     @Override
-    public void updateFilm(Film film) {
+    public Film updateFilm(Film film) {
         if (!films.containsKey(film.getId())) {
             throw new NotFoundException("Фильм с id " + film.getId() + " не найден.");
         }
         films.put(film.getId(), film);
+        return film;
     }
 
     @Override
-    public Film findFilmById(Integer filmId) {
+    public Film findFilmById(long filmId) {
         if (!films.containsKey(filmId)) {
             throw new NotFoundException("Фильм с id " + filmId + " не найден.");
         }
@@ -40,10 +42,16 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public void deleteFilm(Film film) {
-        if (!films.containsKey(film.getId())) {
-            throw new NotFoundException("Фильм с id " + film.getId() + " не найден.");
+    public long deleteFilmById(long filmId) {
+        if (!films.containsKey(filmId)) {
+            throw new NotFoundException("Фильм с id " + filmId + " не найден.");
         }
-        films.remove(film.getId());
+        films.remove(filmId);
+        return filmId;
+    }
+
+    @Override
+    public List<Film> findPopularFilms(int count) {
+        return null;
     }
 }
