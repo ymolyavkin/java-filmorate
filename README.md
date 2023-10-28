@@ -1,6 +1,2 @@
 # java-filmorate
-Template repository for Filmorate project.
-<picture>
- <img alt="Shema" src="https://github.com/ymolyavkin/java-filmorate/blob/add-database/src/sql/Shema.png?raw=true">
-</picture>
-[Примеры запросов]https://github.com/ymolyavkin/java-filmorate/blob/main/src/sql/queries.txt
+Spring Boot приложение Filmorate (от англ. film — «фильм» и rate — «оценивать»). Бэкенд для сервиса, который работает с фильмами и оценками пользователей, а также составляет подборки фильмов, рекомендованных к просмотру.
